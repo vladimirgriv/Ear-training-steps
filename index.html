@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -117,7 +118,7 @@ select{width:100%;min-height:46px;background:#0C0919;color:var(--text);border:1p
  <div class="top-in">
   <div class="brand">
    <div class="brand-mark">I–V</div>
-   <div><div class="brand-name">СТУПЕНИ</div><div class="brand-sub">ладовый слух · один выбор · живой ритм</div></div>
+   <div><div class="brand-name">СТУПЕНИ</div><div class="brand-sub">ладовый слух · музыкальные фразы</div></div>
   </div>
   <button id="btnSound" class="sound-btn">🔊 <span>Звук</span></button>
  </div>
@@ -152,13 +153,13 @@ select{width:100%;min-height:46px;background:#0C0919;color:var(--text);border:1p
    <div class="ctl"><div class="ctl-top"><label for="sCount">Повторов цели</label><span class="val" id="vCount">2 раза</span></div><input type="range" id="sCount" min="1" max="4" step="1" value="2"></div>
   </div>
   <div class="ctl">
-   <div class="ctl-top"><label for="sLen">Длина мелодии</label><span class="val" id="vLen">9 нот</span></div>
-   <input type="range" id="sLen" min="6" max="14" step="1" value="9">
+   <div class="ctl-top"><label for="sLen">Длина мелодии</label><span class="val" id="vLen">10 нот</span></div>
+   <input type="range" id="sLen" min="8" max="12" step="1" value="10">
   </div>
   <div class="ctl">
-   <div class="ctl-top"><label for="sBpm">Темп</label><span class="val" id="vBpm">96 BPM</span></div>
-   <input type="range" id="sBpm" min="50" max="160" step="2" value="96">
-   <div class="presets"><button data-bpm="66">медленно</button><button data-bpm="96">средне</button><button data-bpm="126">быстро</button></div>
+   <div class="ctl-top"><label for="sBpm">Темп</label><span class="val" id="vBpm">88 BPM</span></div>
+   <input type="range" id="sBpm" min="50" max="140" step="2" value="88">
+   <div class="presets"><button data-bpm="66">медленно</button><button data-bpm="88">средне</button><button data-bpm="112">быстро</button></div>
   </div>
  </section>
 
@@ -166,12 +167,13 @@ select{width:100%;min-height:46px;background:#0C0919;color:var(--text);border:1p
   <h2>Разбор</h2>
   <div class="key-line" id="keyLine"></div>
   <div class="sub" id="resultSummary"></div>
-  <div class="targets-line" id="targetsLine"></div>
+  <div class="targetsLine" id="targetsLine"></div>
   <div class="legend" id="legend"></div>
  </section>
 
  <section class="card hint-card">
-  <b>Как играть:</b> слушай мелодию, затем нажимай на ноты — каждая нажатая звучит и выделяется, предыдущая снимается. Перебирай, пока не услышишь нужную ступень, и нажми «Подтвердить выбор». Достаточно найти <b>одну</b> правильную ноту, даже если ступень встречается несколько раз. Тональность и ступени откроются только после подтверждения. В случайных мелодиях теперь есть паузы, восьмые, шестнадцатые и триоли.
+  <b>Как играть:</b> слушай мелодию, затем нажимай на ноты — каждая нажатая звучит и выделяется, предыдущая снимается. Перебирай, пока не услышишь нужную ступень, и нажми «Подтвердить выбор». Достаточно найти <b>одну</b> правильную ноту. Тональность и ступени откроются только после подтверждения.
+  <br><br><b>Как строятся мелодии:</b> короткий мотив и его развитие, тоника в начале и конце, опорные звуки лада, плавное движение к кульминации и обратно, типовые ритмические фигуры с музыкальными паузами. Это делает фразу осмысленной, а тонику — ощутимым центром притяжения.
  </section>
 </main>
 
@@ -200,6 +202,8 @@ const mru=m=>RU[noteIndex(m)];
 const mlabel=m=>mname(m)+' ('+mru(m)+')';
 const mfreq=m=>440*Math.pow(2,(m-69)/12);
 const plural=(n,f)=>{const a=Math.abs(n)%100,d=a%10;if(a>10&&a<20)return f[2];if(d>1&&d<5)return f[1];if(d===1)return f[0];return f[2];};
+const degOfPos=p=>((p%7)+7)%7;
+const posToMidi=(p,root,steps)=>root+12*Math.floor(p/7)+steps[degOfPos(p)];
 
 const DEG=[
  {r:'I',name:'Тоника',short:'Тоника'},
@@ -225,32 +229,105 @@ const SONGS=[
 ];
 const majorDegreeOf=m=>MODES.major.steps.indexOf(noteIndex(m));
 
-/* Ритмические ячейки: четверти, восьмые, шестнадцатые, триоли, пунктир, паузы */
-const RHYTHM={
- simple:{cells:[[1,1],[1,.5,.5],[.5,.5,1],[1.5,.5],[2]],restChance:.08,rests:[.5,1]},
- live:{cells:[[.5,.5,1],[1,.5,.5],[.5,.5,.5,.5],[.75,.25,1],[1/3,1/3,1/3,1],[1.5,.5],[.5,.25,.25,1]],restChance:.16,rests:[.25,.5,.5,1]},
- rich:{cells:[[.25,.25,.25,.25,.5,.5],[.5,.25,.25,.5,.5],[1/3,1/3,1/3,.5,.5],[.25,.25,.5,.25,.25,.5],[.75,.25,.5,.5],[.5,1/3,1/3,1/3,.5]],restChance:.22,rests:[.25,.25,.5,1]}
+/* ===== МУЗЫКАЛЬНАЯ ГЕНЕРАЦИЯ ===== */
+const MOTIFS={
+ 2:[[0,1],[0,1],[0,2],[0,2],[0,4]],
+ 3:[[0,1,2],[0,2,1],[0,1,0],[0,2,4],[0,4,2]],
+ 4:[[0,1,2,1],[0,2,1,0],[0,2,3,2],[0,1,2,3]]
 };
-function makeRhythm(L){
- const cfg=RHYTHM[settings.rhythm]||RHYTHM.live,dur=[],gap=[];
- while(dur.length<L){const cell=pick(cfg.cells);for(const d of cell){if(dur.length<L)dur.push(d);}}
- dur[L-1]=Math.random()<.5?1.5:2;
- for(let i=0;i<L;i++)gap.push(i<L-1&&Math.random()<cfg.restChance?pick(cfg.rests):0);
+function makeCadence(c){
+ if(c<=1)return[0];
+ if(c===2)return pick([[1,0],[2,0],[4,0]]);
+ if(c===3)return pick([[2,1,0],[4,2,0],[3,2,0]]);
+ if(c===4)return pick([[3,2,1,0],[4,2,1,0],[4,3,2,0]]);
+ return pick([[4,3,2,1,0],[5,4,3,2,0],[4,2,1,2,0]]);
+}
+function smoothLeaps(pos){
+ const L=pos.length;
+ for(let i=1;i<L-1;i++){
+  const leap=pos[i]-pos[i-1];
+  if(Math.abs(leap)>4)pos[i]=pos[i-1]+Math.sign(leap)*2;
+ }
+ pos[L-1]=0;
+ return pos.map(p=>clamp(p,-3,10));
+}
+function ensureTarget(pos,target,desired){
+ let count=pos.filter(p=>degOfPos(p)===target).length;
+ if(count>=desired)return pos;
+ const L=pos.length,peakIdx=pos.indexOf(Math.max(...pos));
+ const candidates=shuffle(Array.from({length:L},(_,i)=>i).filter(i=>i>0&&i<L-1&&i!==peakIdx&&degOfPos(pos[i])!==0));
+ for(const idx of candidates){
+  if(count>=desired)break;
+  const cur=pos[idx];let best=null,bd=1e9;
+  for(let p=-7;p<=14;p++){if(degOfPos(p)===target){const d=Math.abs(p-cur);if(d<bd){bd=d;best=p;}}}
+  if(best!==null){pos[idx]=best;count++;}
+ }
+ return pos;
+}
+const FIGURES={
+ simple:[[1,1,1,1],[1,1,.5,.5,1],[1.5,.5,1,1],[2,1,1]],
+ live:[[1,1,.5,.5,1],[1,.5,.5,1,1],[.5,.5,.5,.5,1,1],[.75,.25,1,1,1],[1,1/3,1/3,1/3,1],[1.5,.5,1,1]],
+ rich:[[.25,.25,.25,.25,.5,.5,1],[.5,.25,.25,.5,.5,1],[1/3,1/3,1/3,.5,.5,1],[.25,.25,.5,.25,.25,.5],[.75,.25,.5,.5,1],[.5,1/3,1/3,1/3,.5]]
+};
+function makeMusicalRhythm(pos,m){
+ const L=pos.length,fig=pick(FIGURES[settings.rhythm]||FIGURES.live);
+ const dur=Array.from({length:L},(_,i)=>fig[i%fig.length]);
+ dur[0]=1.5;dur[L-1]=2;
+ pos.forEach((p,i)=>{if(degOfPos(p)===0)dur[i]=Math.max(dur[i],1);});
+ const gap=Array(L).fill(0);
+ if(m>1&&Math.random()<.5)gap[m-1]=.5;
+ if(2*m-1<L-1&&Math.random()<.4)gap[2*m-1]=.5;
+ if(Math.random()<.2)gap[L-2]=.25;
  return {dur,gap};
 }
-function durText(b){
- const map=[[2,'1/2'],[1.5,'1/2·'],[1,'1/4'],[.75,'1/4·'],[.5,'1/8'],[1/3,'1/8T'],[.25,'1/16'],[2/3,'1/4T']];
- for(const[v,s]of map)if(Math.abs(b-v)<.02)return s;
- return b.toFixed(2);
+function generatedRound(target){
+ const mode=settings.mode==='random'?pick(['major','minor']):settings.mode;
+ const steps=MODES[mode].steps,root=rand(57,64),L=settings.len;
+ const m=clamp(Math.floor((L-4)/2),2,4),c=L-2*m;
+ const motif=pick(MOTIFS[m]);
+ let second;const v=Math.random();
+ if(v<.55)second=motif.map(p=>p+pick([1,2]));
+ else if(v<.8)second=motif.slice();
+ else{second=motif.map(p=>-p);const mn=Math.min(...second);if(mn<-2)second=second.map(p=>p+2);}
+ let pos=[...motif,...second,...makeCadence(c)];
+ pos=pos.map(p=>clamp(p,-3,10));
+ pos[0]=0;pos[L-1]=0;
+ pos=smoothLeaps(pos);
+ pos=ensureTarget(pos,target,settings.count);
+ const rh=makeMusicalRhythm(pos,m);
+ return {notes:pos.map(p=>posToMidi(p,root,steps)),degrees:pos.map(degOfPos),dur:rh.dur,gap:rh.gap,root,mode,targetDeg:target,title:'Случайная мелодия',sub:'мотивная фраза · тоника в начале и конце'};
+}
+function songRound(song,target){
+ const shift=rand(-5,5),root=60+shift,all=song.notes.map(n=>n+shift);
+ const L=Math.min(settings.len,all.length),starts=[];
+ for(let s=0;s+L<=all.length;s++){
+  if(all.slice(s,s+L).some(n=>MODES.major.steps.indexOf(noteIndex(n-root))===target))starts.push(s);
+ }
+ const start=starts.length?pick(starts):0,notes=all.slice(start,start+L);
+ const pos=notes.map(n=>{const d=majorDegreeOf(n-root);const oct=Math.floor((n-root)/12);return d+7*oct;});
+ const rh=makeMusicalRhythm(pos,2);
+ return {notes,degrees:notes.map(n=>MODES.major.steps.indexOf(noteIndex(n-root))),dur:rh.dur,gap:rh.gap,root,mode:'major',targetDeg:target,title:song.title,sub:'знакомая мелодия · транспонирована'};
+}
+function makeRound(){
+ if(settings.source!=='gen'){
+  const song=SONGS.find(s=>s.id===settings.source);
+  if(song&&song.notes.some(n=>majorDegreeOf(n-60)===settings.target))return songRound(song,settings.target);
+ }
+ return generatedRound(settings.target);
 }
 
-const DEF={target:0,mode:'major',source:'gen',rhythm:'live',len:9,count:2,bpm:96,muted:false};
+const DEF={target:0,mode:'major',source:'gen',rhythm:'live',len:10,count:2,bpm:88,muted:false};
 let settings={...DEF};
 try{Object.assign(settings,JSON.parse(localStorage.getItem('stupeni.settings')||'{}'));}catch(e){}
-if(!RHYTHM[settings.rhythm])settings.rhythm='live';
+settings.len=clamp(Math.round(settings.len||10),8,12);
+settings.bpm=clamp(Math.round(settings.bpm||88),50,140);
+settings.count=clamp(Math.round(settings.count||2),1,4);
+settings.target=clamp(Math.round(settings.target||0),0,6);
+if(!MODES[settings.mode]&&settings.mode!=='random')settings.mode='major';
+if(!FIGURES[settings.rhythm])settings.rhythm='live';
 const saveS=()=>{try{localStorage.setItem('stupeni.settings',JSON.stringify(settings));}catch(e){}};
 
-/* Синтезаторный звук как в прошлом тренажёре: партиалы, мягкий фильтр, лёгкое пространство */
+/* ===== ЗВУК ===== */
 let audio=null,master=null,bus=null,noiseBuf=null,activeNotes=new Set();
 function makeIR(sec,decay){
  const len=Math.floor(audio.sampleRate*sec),buf=audio.createBuffer(2,len,audio.sampleRate);
@@ -301,6 +378,7 @@ function playTone(midi,t,gate){
 }
 document.addEventListener('pointerdown',()=>{if(!settings.muted)ensureAudio();},{once:true,capture:true});
 
+/* ===== СОСТОЯНИЕ ===== */
 const G={round:null,phase:'idle',returnTo:'idle',selected:null,active:-1,result:null};
 let playToken=0,playTimers=[],regenTimer=null;
 function stopPlayback(){
@@ -328,59 +406,6 @@ function playSingle(midi){
  const ctx=ensureAudio();if(!ctx||settings.muted)return;
  playTone(midi,ctx.currentTime+.01,.5);
 }
-
-/* Мелодии */
-function nearestDeg(pool,from,d){
- let best=-1,bd=1e9;
- pool.forEach((p,k)=>{if(p.d===d){const dist=Math.abs(p.m-pool[from].m);if(dist<bd){bd=dist;best=k;}}});
- return best;
-}
-function generatedRound(target){
- const mode=settings.mode==='random'?pick(['major','minor']):settings.mode;
- const steps=MODES[mode].steps,root=rand(57,64),pool=[];
- for(let oct=0;oct<2;oct++)for(let d=0;d<7;d++){const m=root+steps[d]+12*oct;if(m<=root+17&&m<=84)pool.push({m,d});}
- const L=settings.len,count=clamp(settings.count,1,Math.max(1,L-2));
- let seq=null,positions=null;
- for(let att=0;att<12;att++){
-  let idx=Math.floor(pool.length*.3);
-  const s=[idx];let dir=Math.random()<.5?1:-1;
-  for(let i=1;i<L;i++){
-   if(Math.random()<.2){s.push(idx);continue;}
-   const cands=pool.map((_,k)=>k).filter(k=>k!==idx);
-   const ws=cands.map(k=>{const dist=Math.abs(k-idx);let w=dist<=1?5:dist<=2?3:dist<=3?1.5:.6;if(Math.sign(k-idx)===dir)w*=1.3;return w;});
-   let r=Math.random()*ws.reduce((a,b)=>a+b,0),ch=cands[cands.length-1];
-   for(let k=0;k<cands.length;k++){r-=ws[k];if(r<=0){ch=cands[k];break;}}
-   dir=Math.sign(ch-idx)||dir;idx=ch;s.push(idx);
-  }
-  positions=shuffle(Array.from({length:L},(_,i)=>i)).slice(0,count);
-  positions.forEach(p=>{s[p]=nearestDeg(pool,s[p],target);});
-  if(!s.some(k=>pool[k].d===0)){
-   const free=Array.from({length:L},(_,i)=>i).filter(p=>positions.indexOf(p)<0);
-   const p=free.length?pick(free):0;s[p]=nearestDeg(pool,s[p],0);
-  }
-  if(target!==0&&positions.indexOf(L-1)<0&&Math.random()<.55)s[L-1]=nearestDeg(pool,s[L-1],0);
-  seq=s;
-  if(new Set(s.map(k=>pool[k].d)).size>=3)break;
- }
- const rh=makeRhythm(L);
- return {notes:seq.map(k=>pool[k].m),degrees:seq.map(k=>pool[k].d),dur:rh.dur,gap:rh.gap,root,mode,targetDeg:target,title:'Случайная мелодия',sub:'генератор · живой ритм'};
-}
-function songRound(song,target){
- const shift=rand(-5,5),root=60+shift,all=song.notes.map(n=>n+shift);
- const L=Math.min(settings.len,all.length),starts=[];
- for(let s=0;s+L<=all.length;s++){
-  if(all.slice(s,s+L).some(n=>MODES.major.steps.indexOf(noteIndex(n-root))===target))starts.push(s);
- }
- const start=starts.length?pick(starts):0,notes=all.slice(start,start+L),rh=makeRhythm(notes.length);
- return {notes,degrees:notes.map(n=>MODES.major.steps.indexOf(noteIndex(n-root))),dur:rh.dur,gap:rh.gap,root,mode:'major',targetDeg:target,title:song.title,sub:'знакомая мелодия · транспонирована · ритм изменён'};
-}
-function makeRound(){
- if(settings.source!=='gen'){
-  const song=SONGS.find(s=>s.id===settings.source);
-  if(song&&song.notes.some(n=>majorDegreeOf(n-60)===settings.target))return songRound(song,settings.target);
- }
- return generatedRound(settings.target);
-}
 function newRound(autoplay=false){
  stopPlayback();
  G.round=makeRound();G.selected=null;G.active=-1;G.result=null;G.phase='idle';G.returnTo='idle';
@@ -388,7 +413,7 @@ function newRound(autoplay=false){
  if(autoplay)startListen('answer');
 }
 
-/* Поток */
+/* ===== ПОТОК ===== */
 function startListen(returnTo){
  G.returnTo=returnTo;G.phase='listen';renderAll();
  playMelody(()=>{G.phase=returnTo;renderAll();});
@@ -414,8 +439,13 @@ function primaryAction(){
  else if(P==='result')newRound(true);
 }
 
-/* Рендер */
+/* ===== РЕНДЕР ===== */
 function keyLabel(r){return mname(r.root)+'-'+MODES[r.mode].short+' ('+mru(r.root)+' '+MODES[r.mode].label+')';}
+function durText(b){
+ const map=[[2,'1/2'],[1.5,'1/2·'],[1,'1/4'],[.75,'1/4·'],[.5,'1/8'],[1/3,'1/8T'],[.25,'1/16'],[2/3,'1/4T']];
+ for(const[v,s]of map)if(Math.abs(b-v)<.02)return s;
+ return b.toFixed(2);
+}
 function renderNotes(){
  const r=G.round,grid=$('#noteGrid');if(!r){grid.innerHTML='';return;}
  grid.innerHTML=r.notes.map((m,i)=>{
@@ -438,7 +468,7 @@ function renderStatus(){
  if(P==='idle'){
   $('#status').innerHTML='Ищем: <b>'+d.r+' · '+d.name+'</b>. Нажми «Слушать мелодию» — потом выберешь <b>одну</b> ноту.';
  }else if(P==='listen'){
-  $('#status').innerHTML='Слушай мелодию с ритмом. Тональность пока скрыта.';
+  $('#status').innerHTML='Слушай музыкальную фразу: мотив, кульминация, возвращение к тонике. Тональность пока скрыта.';
  }else if(P==='answer'){
   $('#status').innerHTML=G.selected===null
    ?'Нажимай на ноты: каждая зазвучит и выделится, предыдущая снимется. Найди <b>'+d.r+' ('+d.name+')</b> и подтверди.'
@@ -499,7 +529,7 @@ function buildSourceSelect(){
 }
 function scheduleRegen(){clearTimeout(regenTimer);regenTimer=setTimeout(()=>newRound(false),180);}
 
-/* События */
+/* ===== СОБЫТИЯ ===== */
 $('#btnPrimary').addEventListener('click',primaryAction);
 $('#btnSecondary').addEventListener('click',replay);
 $('#btnClear').addEventListener('click',()=>{if(G.phase==='answer'){G.selected=null;renderNotes();renderStatus();renderDock();}});
@@ -536,7 +566,7 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.phase==='listen')stopAndReturn();});
 
-/* Старт */
+/* ===== СТАРТ ===== */
 buildDegGrid();newRound(false);
 if('ResizeObserver'in window)new ResizeObserver(updateDockH).observe($('#dock'));
 else window.addEventListener('resize',updateDockH);
@@ -544,3 +574,4 @@ else window.addEventListener('resize',updateDockH);
 </script>
 </body>
 </html>
+```
