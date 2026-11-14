@@ -58,17 +58,24 @@ main{max-width:680px;margin:0 auto;padding:12px 12px calc(var(--dock-h) + 22px);
 .status{min-height:40px;font-size:13px;font-weight:600;color:#D6CFF0;line-height:1.45;margin-top:10px}
 .status .good{color:var(--green)}.status .bad{color:var(--red)}.status .warn{color:var(--amber)}
 .status .dim{color:var(--dim);font-family:ui-monospace,Menlo,monospace;font-size:11px}
-.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px}
 .ans{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px;border-radius:14px;background:var(--card2);border:1.5px solid var(--bc);min-height:78px;transition:transform .08s,border-color .12s,background .12s}
 .ans .rn{font-size:21px;font-weight:900;color:var(--c);line-height:1}
-.ans .nm{font-size:9.5px;font-weight:900;letter-spacing:.06em;color:var(--text);text-align:center}
+.ans .nm{font-size:9px;font-weight:900;letter-spacing:.05em;color:var(--text);text-align:center;text-transform:uppercase;line-height:1.2}
 .ans:active:not(:disabled){transform:scale(.96)}
 .ans:disabled{opacity:.45}
-#a0{--c:var(--amber);--bc:rgba(255,178,36,.45)}
-#a2{--c:#C9BFFF;--bc:rgba(201,191,255,.4)}
-#a4{--c:var(--blue);--bc:rgba(110,155,255,.45)}
 .ans.hit{border-color:var(--green)!important;background:rgba(143,232,107,.18)!important;opacity:1!important}
 .ans.miss{border-color:var(--red)!important;background:rgba(255,107,135,.16)!important;opacity:1!important}
+.deg-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.deg-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:#0C0919;min-height:52px}
+.deg-chip b{font-size:14px;font-weight:900;color:#C4B5FD}
+.deg-chip small{font-size:7.5px;font-weight:800;color:var(--dim);line-height:1.1;text-align:center}
+.deg-chip.on{border-color:var(--amber);background:rgba(255,178,36,.1)}
+.deg-chip.on b,.deg-chip.on small{color:#FFD48A}
+.preset-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.preset-row button{font-size:10px;font-weight:800;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-height:32px}
+.preset-row button:active{transform:scale(.97)}
+.pick-note{font-size:10.5px;color:var(--dim);line-height:1.4;margin-bottom:12px}
 .seg{display:flex;gap:3px;background:#0C0919;border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:10px}
 .seg button{flex:1;padding:9px 4px;border-radius:8px;font-size:11px;font-weight:900;color:var(--muted);min-height:38px}
 .seg button.on{background:var(--vio);color:#fff}
@@ -94,7 +101,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .res{display:none;border-color:rgba(143,232,107,.35)}
 .res.show{display:block}
 .keyline{font-size:15px;font-weight:900;color:#FFD48A;line-height:1.35;margin-bottom:8px}
-.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:6px;margin-top:10px}
 .li{font-size:11px;font-weight:700;color:var(--muted);padding:8px;border-radius:9px;border:1px solid var(--line);background:#0C0919;text-align:center}
 .li.t{border-color:rgba(255,178,36,.45);color:#FFD48A;background:rgba(255,178,36,.08)}
 .li b{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
@@ -108,15 +115,15 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom))}
 .dock-in{max-width:680px;margin:0 auto}
 .ds{font-size:12px;font-weight:800;color:#D6CFF0;text-align:center;margin-bottom:8px;min-height:17px}
-.da{display:grid;grid-template-columns:1fr 1.2fr;gap:8px}
+.da{display:grid;grid-template-columns:1.1fr 1.25fr;gap:8px}
 .da.single{grid-template-columns:1fr}
-@media(max-width:380px){.bs{display:none}.strip{gap:3px}.cell{min-height:52px}.cell .nn{font-size:7.5px}.ans .rn{font-size:18px}}
+@media(max-width:380px){.bs{display:none}.strip{gap:3px}.cell{min-height:52px}.cell .nn{font-size:7.5px}.ans .rn{font-size:18px}.deg-pick{grid-template-columns:repeat(3,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-in">
- <div class="brand"><div class="mark">I·III·V</div><div><div class="bn">СТУПЕНИ · ГАММА</div><div class="bs">гамма → нота → угадай ступень</div></div></div>
+ <div class="brand"><div class="mark">I–VII</div><div><div class="bn">СТУПЕНИ · ГАММА</div><div class="bs">гамма → нота → угадай ступень</div></div></div>
  <button id="snd" class="snd">🔊 <span>Звук</span></button>
 </div></header>
 
@@ -124,28 +131,35 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  <section class="card">
   <div class="head">
    <div><h1 class="title" id="ttl">Гамма и загаданная нота</h1><div class="sub" id="sub">тональность скрыта до ответа</div></div>
-   <div class="chips"><span class="chip" id="cMode"></span><span class="chip hot" id="cBpm"></span></div>
+   <div class="chips"><span class="chip" id="cMode"></span><span class="chip hot" id="cBpm"></span><span class="chip hot" id="cSet"></span></div>
   </div>
   <div class="strip" id="strip"></div>
   <div class="strip-hint" id="stripHint"></div>
   <button type="button" class="mystery" id="mystery" disabled>
    <span class="big" id="mBig">?</span>
-   <span class="txt" id="mTxt">Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.</span>
+   <span class="txt" id="mTxt">Здесь прозвучит загаданная нота.</span>
   </button>
   <div class="status" id="status" role="status" aria-live="polite"></div>
  </section>
 
  <section class="card">
   <h2>Твой ответ</h2>
-  <div class="answers">
-   <button class="ans" id="a0" data-d="0"><span class="rn">I</span><span class="nm">ТОНИКА</span></button>
-   <button class="ans" id="a2" data-d="2"><span class="rn">III</span><span class="nm">МЕДИАНТА</span></button>
-   <button class="ans" id="a4" data-d="4"><span class="rn">V</span><span class="nm">ДОМИНАНТА</span></button>
-  </div>
+  <div class="answers" id="answers"></div>
  </section>
 
  <section class="card">
-  <h2>Настройка</h2>
+  <h2>Какие ступени тренировать</h2>
+  <div class="deg-pick" id="degPick"></div>
+  <div class="preset-row" id="degPresets">
+   <button data-set="0,2,4">I · III · V</button>
+   <button data-set="2,3,4">III · IV · V</button>
+   <button data-set="0,4,6">I · V · VII</button>
+   <button data-set="1,3,5">II · IV · VI</button>
+   <button data-set="0,1,2,3,4,5,6">Все 7</button>
+  </div>
+  <div class="pick-note" id="pickNote">Загаданная нота будет только из выбранных ступеней. Кнопок ответа останется столько же.</div>
+
+  <h2 style="margin-top:14px">Настройка</h2>
   <div class="seg" id="segMode"><button data-m="major">Мажор</button><button data-m="minor">Минор</button><button data-m="random">Случайный</button></div>
   <div class="ctl"><div class="ctl-top"><label for="key">Тональность</label></div><select id="key"></select></div>
   <div class="ctl">
@@ -164,14 +178,14 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  </section>
 
  <section class="card hint">
-  <b>Схема:</b> гамма вверх до верхней тоники и обратно вниз, пауза, затем загаданная нота — I, III или V. После ответа ступени становятся кнопками: нажимай любую, чтобы услышать её и сравнить с загаданной нотой. Карточка загаданной ноты тоже нажимается. Кнопка <b>«Послушать всё ещё раз»</b> повторяет всю связку целиком, разбор при этом остаётся на экране.
+  <b>Схема:</b> звучит полная гамма вверх и вниз — она даёт уху опору. Потом одна нота <b>из выбранных тобой ступеней</b>. После ответа все ступени гаммы становятся кнопками: нажимай любую и слушай, сравнивая с загаданной. Внизу главная кнопка — <b>«Следующее задание»</b>, а переслушивание вынесено во второстепенную.
  </section>
 </main>
 
 <div class="dock" id="dock"><div class="dock-in">
  <div class="ds" id="ds">Нажми «Проиграть гамму и ноту»</div>
  <div class="da single" id="da">
-  <button class="btn ghost" id="sec" style="display:none">Следующее задание →</button>
+  <button class="btn ghost" id="sec" style="display:none">↻ Послушать всё ещё раз</button>
   <button class="btn primary" id="pri">▶ Проиграть гамму и ноту</button>
  </div>
 </div></div>
@@ -190,23 +204,33 @@ const mlabel=m=>mname(m)+' ('+RU[pcOf(m)]+')';
 const mfreq=m=>440*Math.pow(2,(m-69)/12);
 const STEPS={major:[0,2,4,5,7,9,11],minor:[0,2,3,5,7,8,10]};
 const MODE_RU={major:'мажор',minor:'минор'},MODE_SH={major:'dur',minor:'moll'};
-const ROMAN=['I','II','III','IV','V','VI','VII'];
-const TARGETS=[0,2,4];
-const DEG_NAME={0:'Тоника',2:'Медианта',4:'Доминанта'};
+const DEG_FULL=[
+ {r:'I',n:'Тоника',c:'#FFB224'},
+ {r:'II',n:'Супертоника',c:'#39D5FF'},
+ {r:'III',n:'Медианта',c:'#C9BFFF'},
+ {r:'IV',n:'Субдоминанта',c:'#4FD1C5'},
+ {r:'V',n:'Доминанта',c:'#6E9BFF'},
+ {r:'VI',n:'Субмедианта',c:'#D946EF'},
+ {r:'VII',n:'Вводная',c:'#FF8A5C'}
+];
+function degName(d){return (G.mode==='minor'&&d===6)?'Субтоника':DEG_FULL[d].n;}
+function setLabel(){return settings.degrees.map(d=>DEG_FULL[d].r).join(' · ');}
 
-const STORE='stupeni.gamma.v5';
-const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false};
+const STORE='stupeni.gamma.v7';
+const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false,degrees:[0,2,4]};
 let settings={...DEF};
 try{Object.assign(settings,JSON.parse(localStorage.getItem(STORE)||'{}'));}catch(e){}
 settings.bpm=clamp(Math.round(settings.bpm||90),50,150);
 if(!STEPS[settings.mode]&&settings.mode!=='random')settings.mode='major';
 if(typeof settings.muted!=='boolean')settings.muted=false;
+if(!Array.isArray(settings.degrees))settings.degrees=[0,2,4];
+settings.degrees=[...new Set(settings.degrees.map(n=>Math.round(n)).filter(n=>n>=0&&n<=6))].sort((a,b)=>a-b);
+if(!settings.degrees.length)settings.degrees=[0,2,4];
 const save=()=>{try{localStorage.setItem(STORE,JSON.stringify(settings));}catch(e){}};
 
 /* ================= ЗВУК ================= */
 let audio=null,master=null,bus=null,noiseBuf=null,silentEl=null;
 const live=new Set();
-
 function makeIR(sec,decay){
  const len=Math.floor(audio.sampleRate*sec),b=audio.createBuffer(2,len,audio.sampleRate);
  for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
@@ -286,7 +310,6 @@ function playTone(midi,t,gate){
 document.addEventListener('pointerdown',()=>{
  if(!settings.muted&&(!audio||audio.state!=='running'))unlockAudio();
 },{capture:true});
-
 function visualDelayMs(ctx,audioTime){
  const now=performance.now();
  try{
@@ -319,11 +342,7 @@ async function tapNote(midi,el){
  const ctx=await unlockAudio();
  if(!ctx||settings.muted)return;
  playTone(midi,ctx.currentTime+.02,.9);
- if(el){
-  el.classList.add('ring');
-  const id=setTimeout(()=>{el.classList.remove('ring');tapTimers.delete(id);},900);
-  tapTimers.add(id);
- }
+ if(el){el.classList.add('ring');const id=setTimeout(()=>{el.classList.remove('ring');tapTimers.delete(id);},900);tapTimers.add(id);}
 }
 async function schedule(items,done){
  stopPlayback();
@@ -350,11 +369,15 @@ async function schedule(items,done){
 const SCALE_PATH=[0,1,2,3,4,5,6,7,6,5,4,3,2,1,0];
 function playScale(done){return schedule(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
 function playTarget(done){return schedule([{midi:G.target,cell:-1,beats:2}],done);}
-function playWhole(done){
- playScale(()=>{later(()=>{playTarget(()=>{G.heard=true;if(done)done();});},420);});
-}
+function playWhole(done){playScale(()=>{later(()=>{playTarget(()=>{G.heard=true;if(done)done();});},420);});}
 
 function rootFromPc(pc){let r=60+pc;if(r>66)r-=12;return r;}
+function pickDegree(){
+ const set=settings.degrees;
+ let d=pick(set);
+ if(set.length>1&&d===G.deg)d=pick(set.filter(x=>x!==G.deg));
+ return d;
+}
 function newRound(){
  stopPlayback();clearTapFlashes();
  const pc=settings.key==='random'?rand(0,11):+settings.key;
@@ -362,7 +385,7 @@ function newRound(){
  G.mode=settings.mode==='random'?pick(['major','minor']):settings.mode;
  const st=STEPS[G.mode];
  G.scale=[0,1,2,3,4,5,6].map(d=>G.root+st[d]).concat([G.root+12]);
- G.deg=pick(TARGETS);
+ G.deg=pickDegree();
  G.target=G.root+st[G.deg];
  G.phase='idle';G.chosen=null;G.ok=null;G.keepResult=false;G.heard=false;G.blocked=false;
  renderAll();
@@ -391,17 +414,25 @@ function primary(){
  const P=G.phase;
  if(P==='idle')runTask();
  else if(P==='playing')stopToSafe();
- else replayAll();
+ else if(P==='question')replayAll();
+ else nextTask();
 }
 
 /* ================= РЕНДЕР ================= */
 function keyLabel(){return mname(G.root)+'-'+MODE_SH[G.mode]+' ('+RU[pcOf(G.root)]+' '+MODE_RU[G.mode]+')';}
 function revealed(){return settings.names||unlocked();}
+function renderDegPick(){
+ $('#degPick').innerHTML=DEG_FULL.map((x,i)=>{
+  const on=settings.degrees.includes(i);
+  return '<button type="button" class="deg-chip'+(on?' on':'')+'" data-d="'+i+'" aria-pressed="'+on+'"><b>'+x.r+'</b><small>'+degName(i)+'</small></button>';
+ }).join('');
+ $('#pickNote').textContent='Сейчас тренируются: '+setLabel()+'. Загаданная нота будет только из них, кнопок ответа — '+settings.degrees.length+'.';
+}
 function renderStage(){
  clearTapFlashes();
  const open=unlocked();
  $('#strip').innerHTML=G.scale.map((m,i)=>{
-  const rn=i===7?'I':ROMAN[i];
+  const rn=i===7?'I':DEG_FULL[i].r;
   let c='cell';
   if(G.activeCell===i)c+=' on';
   if(open&&i===G.deg)c+=' tgt';
@@ -413,53 +444,45 @@ function renderStage(){
  }).join('');
  const hint=$('#stripHint');
  hint.classList.toggle('on',open);
- hint.innerHTML=open
-  ?'♪ Нажимай на любую ступень — она прозвучит. Так сравниваешь загаданную ноту с тоникой и остальными.'
-  :'Ступени откроются для прослушивания после того, как ты выберешь ответ.';
+ hint.innerHTML=open?'♪ Нажимай на любую ступень — она прозвучит. Так сравниваешь загаданную ноту с тоникой и остальными.':'Ступени откроются для прослушивания после того, как ты выберешь ответ.';
  const mys=$('#mystery');
- mys.disabled=!open;
- mys.classList.toggle('tap',open);
- mys.classList.toggle('play',G.mysteryPlay);
+ mys.disabled=!open;mys.classList.toggle('tap',open);mys.classList.toggle('play',G.mysteryPlay);
  mys.setAttribute('aria-label',open?'Загаданная нота '+mlabel(G.target)+' — нажми, чтобы услышать':'Загаданная нота');
  if(open){
-  $('#mBig').textContent=ROMAN[G.deg];
-  $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>. Нажми, чтобы услышать её снова.';
+  $('#mBig').textContent=DEG_FULL[G.deg].r;
+  $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+DEG_FULL[G.deg].r+' ступень ('+degName(G.deg)+')</b>. Нажми, чтобы услышать её снова.';
  }else if(G.phase==='idle'){
   $('#mBig').textContent='?';
-  $('#mTxt').innerHTML='Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.';
+  $('#mTxt').innerHTML='Здесь прозвучит загаданная нота. Это будет одна из ступеней: <b>'+setLabel()+'</b>.';
  }else{
   $('#mBig').textContent=G.mysteryPlay?'♪':'?';
   $('#mTxt').innerHTML=G.mysteryPlay?'Слушай загаданную ноту…':'Нота прозвучала. Ответь кнопками ниже или переслушай всё целиком.';
  }
 }
 function renderAnswers(){
- [0,2,4].forEach(d=>{
-  const b=$('#a'+d);
-  b.disabled=G.phase!=='question';
-  b.classList.remove('hit','miss');
-  if(unlocked()){
-   if(d===G.deg)b.classList.add('hit');
-   else if(d===G.chosen)b.classList.add('miss');
-  }
- });
+ $('#answers').innerHTML=settings.degrees.map(d=>{
+  const x=DEG_FULL[d];
+  let c='ans';
+  if(unlocked()){if(d===G.deg)c+=' hit';else if(d===G.chosen)c+=' miss';}
+  const dis=G.phase!=='question';
+  return '<button class="'+c+'" data-d="'+d+'" '+(dis?'disabled':'')+' style="--c:'+x.c+';--bc:'+x.c+'66"><span class="rn">'+x.r+'</span><span class="nm">'+degName(d)+'</span></button>';
+ }).join('');
 }
 function renderStatus(){
  const P=G.phase;
  if(G.blocked){
-  $('#status').innerHTML=settings.muted
-   ?'<span class="warn">Звук выключен</span> кнопкой сверху.'
-   :'<span class="warn">Звук не запустился.</span> Нажми «Проиграть» ещё раз — браузер иногда блокирует звук до первого касания.';
+  $('#status').innerHTML=settings.muted?'<span class="warn">Звук выключен</span> кнопкой сверху.':'<span class="warn">Звук не запустился.</span> Нажми «Проиграть» ещё раз — браузер иногда блокирует звук до первого касания.';
   return;
  }
- if(P==='idle')$('#status').innerHTML='Нажми <b>«Проиграть гамму и ноту»</b>: гамма вверх и вниз, пауза, затем одна нота.';
+ if(P==='idle')$('#status').innerHTML='Тренируем: <b>'+setLabel()+'</b>. Нажми «Проиграть гамму и ноту»: гамма вверх и вниз, пауза, затем одна нота.';
  else if(P==='playing'&&G.keepResult)$('#status').innerHTML='Слушай ещё раз: гамма вверх и вниз, затем загаданная нота. Разбор остаётся ниже.';
  else if(P==='playing')$('#status').innerHTML='Слушай… '+(G.mysteryPlay?'загаданная нота.':'гамма вверх и обратно вниз.');
- else if(P==='question')$('#status').innerHTML='Какая это ступень? Нажми <b>I</b>, <b>III</b> или <b>V</b>.';
+ else if(P==='question')$('#status').innerHTML='Какая это ступень? Варианты: <b>'+setLabel()+'</b>.';
  else{
   const note='<span class="dim">'+mlabel(G.target)+'</span>';
   $('#status').innerHTML=G.ok
-   ?'<span class="good">✓ Верно!</span> Это <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note
-   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'.';
+   ?'<span class="good">✓ Верно!</span> Это <b>'+DEG_FULL[G.deg].r+' ('+degName(G.deg)+')</b> · '+note
+   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+DEG_FULL[G.chosen].r+', а это была <b>'+DEG_FULL[G.deg].r+' ('+degName(G.deg)+')</b> · '+note+'.';
  }
 }
 function renderResult(){
@@ -467,10 +490,11 @@ function renderResult(){
  $('#res').classList.toggle('show',show);
  if(!show)return;
  $('#keyline').textContent='Тональность: '+keyLabel()+' · тоника '+mlabel(G.root);
- $('#verdict').innerHTML='Загаданная нота <b>'+mlabel(G.target)+'</b> — ступень <b>'+ROMAN[G.deg]+'</b>. Сравни её с тоникой и остальными опорными звуками:';
- $('#legend').innerHTML=TARGETS.map(d=>{
+ $('#verdict').innerHTML='Загаданная нота <b>'+mlabel(G.target)+'</b> — ступень <b>'+DEG_FULL[G.deg].r+'</b>. Сравни её с опорными звуками:';
+ const refs=[...new Set([0,...settings.degrees])].sort((a,b)=>a-b);
+ $('#legend').innerHTML=refs.map(d=>{
   const m=G.root+STEPS[G.mode][d];
-  return '<div class="li'+(d===G.deg?' t':'')+'"><b>'+ROMAN[d]+'</b>'+mlabel(m)+'<br><span style="color:var(--dim)">'+DEG_NAME[d]+'</span></div>';
+  return '<div class="li'+(d===G.deg?' t':'')+'"><b>'+DEG_FULL[d].r+'</b>'+mlabel(m)+'<br><span style="color:var(--dim)">'+degName(d)+'</span></div>';
  }).join('');
 }
 function renderDock(){
@@ -480,21 +504,24 @@ function renderDock(){
  da.classList.toggle('single',!showSec);
  if(P==='idle')pri.textContent='▶ Проиграть гамму и ноту';
  else if(P==='playing')pri.textContent='⏹ Стоп';
- else pri.textContent='↻ Послушать всё ещё раз';
- sec.textContent='Следующее задание →';
- $('#ds').innerHTML=P==='idle'?'Шаг 1 · слушай':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — послушай ещё раз');
+ else if(P==='question')pri.textContent='↻ Послушать всё ещё раз';
+ else pri.textContent='Следующее задание →';
+ sec.textContent='↻ Послушать всё ещё раз';
+ $('#ds').innerHTML=P==='idle'?'Шаг 1 · слушай':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — разбери и дальше');
 }
 function renderSettings(){
  $$('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===settings.mode));
  $('#key').value=settings.key;
  $('#bpm').value=settings.bpm;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;
  $('#cMode').textContent=settings.mode==='random'?'лад: случайный':MODE_RU[settings.mode];
+ $('#cSet').textContent=setLabel();
  $('#swNames').classList.toggle('on',settings.names);
  $('#swNames').setAttribute('aria-checked',String(settings.names));
  $('#snd').classList.toggle('off',settings.muted);
  $('#snd').innerHTML=settings.muted?'🔇 <span>Тихо</span>':'🔊 <span>Звук</span>';
  $('#sub').textContent=revealed()?keyLabel():'тональность скрыта до ответа';
- $('#ttl').textContent=G.phase==='idle'?'Гамма и загаданная нота':'Задание: I, III или V';
+ $('#ttl').textContent=G.phase==='idle'?'Гамма и загаданная нота':'Задание: '+setLabel();
+ renderDegPick();
 }
 function renderAll(){
  renderSettings();renderStage();renderAnswers();renderStatus();renderResult();renderDock();
@@ -503,14 +530,23 @@ function renderAll(){
 
 /* ================= СОБЫТИЯ ================= */
 $('#pri').addEventListener('click',primary);
-$('#sec').addEventListener('click',()=>{if(G.phase==='result')nextTask();});
-$$('.ans').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.d)));
-$('#strip').addEventListener('click',e=>{
- const b=e.target.closest('.cell');
- if(!b||b.disabled||!unlocked())return;
- tapNote(G.scale[+b.dataset.i],b);
-});
+$('#sec').addEventListener('click',()=>{if(G.phase==='result')replayAll();});
+$('#answers').addEventListener('click',e=>{const b=e.target.closest('.ans');if(b&&!b.disabled)answer(+b.dataset.d);});
+$('#strip').addEventListener('click',e=>{const b=e.target.closest('.cell');if(!b||b.disabled||!unlocked())return;tapNote(G.scale[+b.dataset.i],b);});
 $('#mystery').addEventListener('click',()=>{if(unlocked())tapNote(G.target,$('#mystery'));});
+$('#degPick').addEventListener('click',e=>{
+ const b=e.target.closest('.deg-chip');if(!b)return;
+ const d=+b.dataset.d,i=settings.degrees.indexOf(d);
+ if(i>=0){
+  if(settings.degrees.length===1){$('#pickNote').textContent='Нужна хотя бы одна ступень — иначе нечего угадывать.';return;}
+  settings.degrees.splice(i,1);
+ }else settings.degrees.push(d);
+ settings.degrees.sort((a,b)=>a-b);save();newRound();
+});
+$('#degPresets').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ settings.degrees=b.dataset.set.split(',').map(Number);save();newRound();
+});
 $$('#segMode button').forEach(b=>b.addEventListener('click',()=>{settings.mode=b.dataset.m;save();newRound();}));
 $('#key').addEventListener('change',e=>{settings.key=e.target.value;save();newRound();});
 $('#bpm').addEventListener('input',e=>{settings.bpm=+e.target.value;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;save();});
@@ -522,22 +558,17 @@ $('#snd').addEventListener('click',async()=>{
   stopPlayback();clearTapFlashes();
   if(master)master.gain.value=0;
   if(silentEl){try{silentEl.pause();}catch(e){}}
-  G.keepResult=false;
-  G.phase=G.chosen!==null?'result':(G.heard?'question':'idle');
- }else{
-  await unlockAudio();
-  if(master)master.gain.value=.85;
- }
+  G.keepResult=false;G.phase=G.chosen!==null?'result':(G.heard?'question':'idle');
+ }else{await unlockAudio();if(master)master.gain.value=.85;}
  renderAll();
 });
 document.addEventListener('keydown',e=>{
  const t=(document.activeElement&&document.activeElement.tagName)||'';
  if(['INPUT','SELECT','TEXTAREA'].includes(t))return;
- if(e.target.closest&&e.target.closest('#strip,#mystery'))return;
- if(e.code==='Digit1'){e.preventDefault();answer(0);}
- else if(e.code==='Digit2'){e.preventDefault();answer(2);}
- else if(e.code==='Digit3'){e.preventDefault();answer(4);}
- else if(e.code==='Space'||e.code==='Enter'){e.preventDefault();primary();}
+ if(e.target.closest&&e.target.closest('#strip,#mystery,#degPick,#degPresets,#answers'))return;
+ const m=e.code.match(/^Digit([1-7])$/);
+ if(m){const i=+m[1]-1;if(i<settings.degrees.length){e.preventDefault();answer(settings.degrees[i]);}return;}
+ if(e.code==='Space'||e.code==='Enter'){e.preventDefault();primary();}
  else if(e.code==='KeyR'){e.preventDefault();replayAll();}
  else if(e.code==='Escape'){stopToSafe();}
 });
