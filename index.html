@@ -178,7 +178,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  </section>
 
  <section class="card hint">
-  <b>Схема:</b> звучит полная гамма вверх и вниз — она даёт уху опору. Потом одна нота <b>из выбранных тобой ступеней</b>. После ответа все ступени гаммы становятся кнопками: нажимай любую и слушай, сравнивая с загаданной. Внизу главная кнопка — <b>«Следующее задание»</b>, а переслушивание вынесено во второстепенную.
+  <b>Схема:</b> звучит полная гамма вверх и вниз — она даёт уху опору. Потом одна нота <b>из выбранных тобой ступеней</b>. После ответа все ступени гаммы становятся кнопками: нажимай любую и слушай, сравнивая с загаданной. Внизу главная кнопка — <b>«Следующее задание»</b>, переслушивание — второстепенная.
  </section>
 </main>
 
@@ -213,10 +213,12 @@ const DEG_FULL=[
  {r:'VI',n:'Субмедианта',c:'#D946EF'},
  {r:'VII',n:'Вводная',c:'#FF8A5C'}
 ];
+const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,
+ activeCell:-1,mysteryPlay:false,keepResult:false,heard:false,blocked:false};
 function degName(d){return (G.mode==='minor'&&d===6)?'Субтоника':DEG_FULL[d].n;}
 function setLabel(){return settings.degrees.map(d=>DEG_FULL[d].r).join(' · ');}
 
-const STORE='stupeni.gamma.v7';
+const STORE='stupeni.gamma.v8';
 const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false,degrees:[0,2,4]};
 let settings={...DEF};
 try{Object.assign(settings,JSON.parse(localStorage.getItem(STORE)||'{}'));}catch(e){}
@@ -276,11 +278,13 @@ function makeSilent(){
 async function unlockAudio(){
  if(settings.muted)return null;
  if(!audio&&!buildGraph())return null;
+ const wasRunning=audio.state==='running';
  let p=null;
- if(audio.state!=='running'){try{p=audio.resume();}catch(e){}}
+ if(!wasRunning){try{p=audio.resume();}catch(e){}}
  const el=makeSilent();
  if(el&&el.paused){try{const q=el.play();if(q&&q.catch)q.catch(()=>{});}catch(e){}}
  if(p&&p.then){try{await p;}catch(e){}}
+ if(!wasRunning){await new Promise(r=>setTimeout(r,60));}
  return audio.state==='running'?audio:null;
 }
 function playTone(midi,t,gate){
@@ -310,23 +314,8 @@ function playTone(midi,t,gate){
 document.addEventListener('pointerdown',()=>{
  if(!settings.muted&&(!audio||audio.state!=='running'))unlockAudio();
 },{capture:true});
-function visualDelayMs(ctx,audioTime){
- const now=performance.now();
- try{
-  if(typeof ctx.getOutputTimestamp==='function'){
-   const ts=ctx.getOutputTimestamp();
-   if(ts&&Number.isFinite(ts.contextTime)&&Number.isFinite(ts.performanceTime)){
-    return Math.max(0,ts.performanceTime+(audioTime-ts.contextTime)*1000-now+18);
-   }
-  }
- }catch(e){}
- const latency=((ctx.outputLatency||ctx.baseLatency||0)+0.05)*1000;
- return Math.max(0,(audioTime-ctx.currentTime)*1000+latency);
-}
 
-/* ================= СОСТОЯНИЕ ================= */
-const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,
- activeCell:-1,mysteryPlay:false,keepResult:false,heard:false,blocked:false};
+/* ================= ПОСЛЕДОВАТЕЛЬНЫЙ ПРОИГРЫШ ================= */
 let token=0,timers=[],gapTimer=null;
 const tapTimers=new Set();
 function clearTapFlashes(){tapTimers.forEach(clearTimeout);tapTimers.clear();}
@@ -336,41 +325,60 @@ function stopPlayback(){
  live.forEach(o=>{try{o.stop()}catch(e){}});live.clear();
  G.activeCell=-1;G.mysteryPlay=false;
 }
+function playSequence(items,done){
+ stopPlayback();
+ const tk=token;
+ unlockAudio().then(ctx=>{
+  if(tk!==token)return;
+  if(!ctx||settings.muted){
+   G.blocked=true;G.keepResult=false;
+   G.phase=G.chosen!==null?'result':'idle';
+   renderAll();return;
+  }
+  G.blocked=false;
+  const beat=60/settings.bpm;
+  let i=0;
+  const step=()=>{
+   if(tk!==token)return;
+   if(i>=items.length){
+    G.activeCell=-1;G.mysteryPlay=false;renderStage();
+    if(done)done();
+    return;
+   }
+   const it=items[i];
+   const gate=Math.max(.16,Math.min(it.beats*beat*.9,it.beats>1?1.3:.7));
+   const start=audio.currentTime+0.03;
+   playTone(it.midi,start,gate);
+   const lat=(audio.outputLatency||audio.baseLatency||0.02);
+   const vDelay=Math.max(45,lat*1000+25);
+   timers.push(setTimeout(()=>{
+    if(tk!==token)return;
+    G.activeCell=it.cell;G.mysteryPlay=it.cell===-1;renderStage();
+   },vDelay));
+   timers.push(setTimeout(()=>{
+    if(tk!==token)return;
+    if(G.activeCell===it.cell)G.activeCell=-1;
+    G.mysteryPlay=false;renderStage();
+   },vDelay+gate*1000));
+   i++;
+   timers.push(setTimeout(step,Math.max(140,it.beats*beat*1000)));
+  };
+  timers.push(setTimeout(step,180));
+ });
+}
+const SCALE_PATH=[0,1,2,3,4,5,6,7,6,5,4,3,2,1,0];
+function playScale(done){return playSequence(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
+function playTarget(done){return playSequence([{midi:G.target,cell:-1,beats:2}],done);}
+function playWhole(done){playScale(()=>{later(()=>{playTarget(()=>{G.heard=true;if(done)done();});},420);});}
+
 function unlocked(){return G.phase==='result'||G.keepResult;}
 async function tapNote(midi,el){
  if(!unlocked())return;
  const ctx=await unlockAudio();
  if(!ctx||settings.muted)return;
- playTone(midi,ctx.currentTime+.02,.9);
+ playTone(midi,ctx.currentTime+.03,.9);
  if(el){el.classList.add('ring');const id=setTimeout(()=>{el.classList.remove('ring');tapTimers.delete(id);},900);tapTimers.add(id);}
 }
-async function schedule(items,done){
- stopPlayback();
- const tk=token;
- const ctx=await unlockAudio();
- if(tk!==token)return;
- if(!ctx||settings.muted){
-  G.blocked=true;G.keepResult=false;
-  G.phase=G.chosen!==null?'result':'idle';
-  renderAll();return;
- }
- G.blocked=false;
- const beat=60/settings.bpm,t0=ctx.currentTime+.12;
- let acc=0;
- items.forEach(it=>{
-  const st=t0+acc*beat,gate=Math.max(.16,Math.min(it.beats*beat*.9,it.beats>1?1.3:.7));
-  playTone(it.midi,st,gate);
-  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=it.cell;G.mysteryPlay=it.cell===-1;renderStage();},visualDelayMs(ctx,st)));
-  timers.push(setTimeout(()=>{if(tk!==token)return;if(G.activeCell===it.cell)G.activeCell=-1;G.mysteryPlay=false;renderStage();},visualDelayMs(ctx,st+gate)));
-  acc+=it.beats;
- });
- timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();if(done)done();},visualDelayMs(ctx,t0+acc*beat)+180));
-}
-const SCALE_PATH=[0,1,2,3,4,5,6,7,6,5,4,3,2,1,0];
-function playScale(done){return schedule(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
-function playTarget(done){return schedule([{midi:G.target,cell:-1,beats:2}],done);}
-function playWhole(done){playScale(()=>{later(()=>{playTarget(()=>{G.heard=true;if(done)done();});},420);});}
-
 function rootFromPc(pc){let r=60+pc;if(r>66)r-=12;return r;}
 function pickDegree(){
  const set=settings.degrees;
