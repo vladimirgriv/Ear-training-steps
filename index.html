@@ -20,7 +20,7 @@ button:disabled{cursor:default}
 .top{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 14px 8px}
 .top-in{max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{display:flex;align-items:center;gap:9px}
-.mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--vio),var(--mag));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:12px}
+.mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--vio),var(--mag));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:11px}
 .bn{font-weight:900;font-size:15px;letter-spacing:.08em}
 .bs{font-size:10px;color:var(--muted);margin-top:1px}
 .snd{display:flex;gap:6px;align-items:center;font-weight:800;font-size:12px;padding:9px 13px;border-radius:999px;border:1px solid rgba(143,232,107,.4);background:rgba(143,232,107,.08);color:#C9F7B4;min-height:40px}
@@ -34,6 +34,9 @@ main{max-width:680px;margin:0 auto;padding:12px 12px calc(var(--dock-h) + 22px);
 .chips{display:flex;gap:5px;flex-wrap:wrap}
 .chip{font-size:11px;font-weight:800;padding:5px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(139,92,246,.07);white-space:nowrap}
 .chip.hot{color:#FFD48A;border-color:rgba(255,178,36,.4);background:rgba(255,178,36,.08)}
+.audio-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 10px;margin-bottom:10px;border-radius:11px;border:1px solid var(--line);background:rgba(139,92,246,.05)}
+.astate{font-size:11.5px;font-weight:800;color:var(--muted)}
+.astate.ok{color:#C9F7B4}.astate.warn{color:#FFD48A}.astate.off{color:#FFB3C2}
 .strip{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
 .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;border-radius:10px;background:#100D22;border:1.5px solid var(--line);padding:6px 2px}
 .cell .rn{font-size:11px;font-weight:900;color:#C4B5FD}
@@ -92,12 +95,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:13px;padding:11px 12px;border-radius:12px;border:1px solid transparent;min-height:48px;user-select:none}
 .btn.primary{background:linear-gradient(135deg,var(--vio),var(--mag));color:#fff}
 .btn.ghost{border-color:var(--line);color:#C4B5FD;background:rgba(139,92,246,.06)}
+.btn.mini{min-height:36px;padding:7px 11px;font-size:11.5px}
 .btn:active:not(:disabled){transform:scale(.98)}
 .btn:disabled{opacity:.45}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom))}
 .dock-in{max-width:680px;margin:0 auto}
 .ds{font-size:12px;font-weight:800;color:#D6CFF0;text-align:center;margin-bottom:8px;min-height:17px}
-.da{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
+.da{display:grid;grid-template-columns:1fr 1.2fr;gap:8px}
 .da.single{grid-template-columns:1fr}
 @media(max-width:380px){.bs{display:none}.strip{gap:3px}.cell{min-height:52px}.cell .nn{font-size:7.5px}.ans .rn{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -114,6 +118,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="head">
    <div><h1 class="title" id="ttl">Гамма и загаданная нота</h1><div class="sub" id="sub">тональность скрыта до ответа</div></div>
    <div class="chips"><span class="chip" id="cMode"></span><span class="chip hot" id="cBpm"></span></div>
+  </div>
+  <div class="audio-row">
+   <span class="astate" id="aState">Звук: не запущен</span>
+   <button class="btn ghost mini" id="test">♪ Проверить звук</button>
   </div>
   <div class="strip" id="strip"></div>
   <div class="mystery" id="mystery">
@@ -152,16 +160,16 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  </section>
 
  <section class="card hint">
-  <b>Схема:</b> звучит гамма вверх до верхней тоники и обратно вниз — это даёт уху опору. Потом отдельно звучит одна нота: I, III или V. Определи её на слух. После ответа жми <b>«Послушать ещё раз»</b> — гамма и нота прозвучат заново, а разбор останется на экране: можно сравнить загаданную ноту с тоникой и другими опорными звуками.<br><br>
-  <b>Нагрузка:</b> без canvas и покадровых циклов, звук событийный, интерфейс статичный.
+  <b>Если звука нет:</b> нажми «♪ Проверить звук» — она играет тонику. Дальше проверь боковой переключатель «Бесшумно» и громкость медиа (кнопки громкости на айфоне регулируют именно медиа, когда что-то играет). Строка состояния сверху показывает, живой ли аудиоконтекст.<br><br>
+  <b>Схема:</b> гамма вверх до верхней тоники и обратно вниз, пауза, затем загаданная нота — I, III или V. Кнопка <b>«Послушать всё ещё раз»</b> повторяет всю связку целиком, разбор при этом остаётся на экране.
  </section>
 </main>
 
 <div class="dock" id="dock"><div class="dock-in">
- <div class="ds" id="ds">Нажми «Проиграть гамму»</div>
+ <div class="ds" id="ds">Нажми «Проиграть гамму и ноту»</div>
  <div class="da single" id="da">
-  <button class="btn ghost" id="sec" style="display:none">↻ Гамма</button>
-  <button class="btn primary" id="pri">▶ Проиграть гамму</button>
+  <button class="btn ghost" id="sec" style="display:none">Следующее задание →</button>
+  <button class="btn primary" id="pri">▶ Проиграть гамму и ноту</button>
  </div>
 </div></div>
 
@@ -183,37 +191,75 @@ const ROMAN=['I','II','III','IV','V','VI','VII'];
 const TARGETS=[0,2,4];
 const DEG_NAME={0:'Тоника',2:'Медианта',4:'Доминанта'};
 
+/* новый ключ хранения: старое залипшее «Тихо» больше не подхватывается */
+const STORE='stupeni.gamma.v3';
 const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false};
 let settings={...DEF};
-try{Object.assign(settings,JSON.parse(localStorage.getItem('stupeni.gamma')||'{}'));}catch(e){}
+try{Object.assign(settings,JSON.parse(localStorage.getItem(STORE)||'{}'));}catch(e){}
 settings.bpm=clamp(Math.round(settings.bpm||90),50,150);
 if(!STEPS[settings.mode]&&settings.mode!=='random')settings.mode='major';
-const save=()=>{try{localStorage.setItem('stupeni.gamma',JSON.stringify(settings));}catch(e){}};
+if(typeof settings.muted!=='boolean')settings.muted=false;
+const save=()=>{try{localStorage.setItem(STORE,JSON.stringify(settings));}catch(e){}};
 
-/* ---------- тёплый синтезаторный звук ---------- */
-let audio=null,master=null,bus=null,noiseBuf=null,live=new Set();
+/* ================= ЗВУК ================= */
+let audio=null,master=null,bus=null,noiseBuf=null,silentEl=null,audioState='idle';
+const live=new Set();
+
 function makeIR(sec,decay){
  const len=Math.floor(audio.sampleRate*sec),b=audio.createBuffer(2,len,audio.sampleRate);
  for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
  return b;
 }
-function ensureAudio(){
- if(settings.muted)return null;
- if(audio){if(audio.state==='suspended')audio.resume();return audio;}
- const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
- audio=new C();
- master=audio.createGain();master.gain.value=.8;
+function buildGraph(){
+ const C=window.AudioContext||window.webkitAudioContext;
+ if(!C)return false;
+ try{audio=new C();}catch(e){return false;}
+ master=audio.createGain();master.gain.value=.85;
  const comp=audio.createDynamicsCompressor();
- comp.threshold.value=-16;comp.knee.value=18;comp.ratio.value=4;comp.attack.value=.004;comp.release.value=.24;
+ comp.threshold.value=-14;comp.knee.value=18;comp.ratio.value=3.5;comp.attack.value=.004;comp.release.value=.25;
  master.connect(comp);comp.connect(audio.destination);
- bus=audio.createGain();bus.connect(master);
- const conv=audio.createConvolver();conv.buffer=makeIR(1.25,2.8);
- const wet=audio.createGain();wet.gain.value=.24;
- bus.connect(conv);conv.connect(wet);wet.connect(master);
+ bus=audio.createGain();bus.gain.value=1;bus.connect(master);
+ try{
+  const conv=audio.createConvolver();conv.buffer=makeIR(1.2,2.8);
+  const wet=audio.createGain();wet.gain.value=.22;
+  bus.connect(conv);conv.connect(wet);wet.connect(master);
+ }catch(e){}
  const nb=audio.createBuffer(1,Math.floor(audio.sampleRate*.05),audio.sampleRate),nd=nb.getChannelData(0);
  for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,2);
  noiseBuf=nb;
- return audio;
+ audio.onstatechange=()=>{audioState=audio.state;renderAudioState();};
+ return true;
+}
+/* тихий медиа-элемент открывает аудиосессию iOS (в т.ч. при «Бесшумно») */
+function makeSilent(){
+ if(silentEl)return silentEl;
+ try{
+  const sr=8000,n=800,buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF');v.setUint32(4,36+n*2,true);ws(8,'WAVE');ws(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+  ws(36,'data');v.setUint32(40,n*2,true);
+  const el=document.createElement('audio');
+  el.src=URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));
+  el.loop=true;el.playsInline=true;
+  el.setAttribute('playsinline','');el.setAttribute('aria-hidden','true');
+  el.style.display='none';document.body.appendChild(el);
+  silentEl=el;
+ }catch(e){}
+ return silentEl;
+}
+/* синхронная часть выполняется внутри жеста — это важно для iOS */
+async function unlockAudio(){
+ if(settings.muted){audioState='muted';renderAudioState();return null;}
+ if(!audio&&!buildGraph()){audioState='unsupported';renderAudioState();return null;}
+ let p=null;
+ if(audio.state!=='running'){try{p=audio.resume();}catch(e){}}
+ const el=makeSilent();
+ if(el&&el.paused){try{const q=el.play();if(q&&q.catch)q.catch(()=>{});}catch(e){}}
+ if(p&&p.then){try{await p;}catch(e){}}
+ audioState=audio.state;renderAudioState();
+ return audio.state==='running'?audio:null;
 }
 function playTone(midi,t,gate){
  if(!audio||settings.muted)return;
@@ -221,7 +267,7 @@ function playTone(midi,t,gate){
  const g=audio.createGain(),lp=audio.createBiquadFilter();
  lp.type='lowpass';lp.frequency.value=Math.min(8500,f*6);lp.Q.value=.5;
  lp.connect(g);g.connect(bus);
- const peak=.22;
+ const peak=.24;
  g.gain.setValueAtTime(0,t);
  g.gain.linearRampToValueAtTime(peak,t+.008);
  g.gain.exponentialRampToValueAtTime(Math.max(.001,peak*.35),t+Math.min(.12,gate*.5));
@@ -239,10 +285,23 @@ function playTone(midi,t,gate){
   ns.start(t);ns.stop(t+.06);live.add(ns);ns.onended=()=>live.delete(ns);
  }
 }
-document.addEventListener('pointerdown',()=>{if(!settings.muted)ensureAudio();},{once:true,capture:true});
+function renderAudioState(){
+ const el=$('#aState');if(!el)return;
+ el.classList.remove('ok','warn','off');
+ if(settings.muted){el.textContent='Звук выключен кнопкой сверху';el.classList.add('off');}
+ else if(audioState==='unsupported'){el.textContent='Браузер не поддерживает Web Audio';el.classList.add('off');}
+ else if(audioState==='running'){el.textContent='Звук готов ✓';el.classList.add('ok');}
+ else if(audioState==='interrupted'||audioState==='suspended'){el.textContent='Звук усыплён — нажми «Проверить звук»';el.classList.add('warn');}
+ else{el.textContent='Звук не запущен — нажми «Проверить звук»';el.classList.add('warn');}
+}
+/* любое касание пробуждает контекст, если iOS его усыпила */
+document.addEventListener('pointerdown',()=>{
+ if(!settings.muted&&(!audio||audio.state!=='running'))unlockAudio();
+},{capture:true});
 
-/* ---------- состояние ---------- */
-const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,activeCell:-1,mysteryPlay:false,keepResult:false};
+/* ================= СОСТОЯНИЕ ================= */
+const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,
+ activeCell:-1,mysteryPlay:false,keepResult:false,heard:false,blocked:false};
 let token=0,timers=[],gapTimer=null;
 function later(fn,ms){clearTimeout(gapTimer);gapTimer=setTimeout(fn,ms);}
 function stopPlayback(){
@@ -250,25 +309,37 @@ function stopPlayback(){
  live.forEach(o=>{try{o.stop()}catch(e){}});live.clear();
  G.activeCell=-1;G.mysteryPlay=false;
 }
-function schedule(items,done){
+async function schedule(items,done){
  stopPlayback();
- const tk=token,beat=60/settings.bpm,ctx=ensureAudio();
- const use=!!ctx&&!settings.muted,t0=use?ctx.currentTime+.08:0;
+ const tk=token;
+ const ctx=await unlockAudio();
+ if(tk!==token)return;                 // за время ожидания проигрыш отменили
+ const use=!!ctx&&!settings.muted;
+ if(!use){
+  G.blocked=true;G.keepResult=false;
+  G.phase=G.chosen!==null?'result':'idle';
+  renderAll();return;
+ }
+ G.blocked=false;
+ const beat=60/settings.bpm,t0=ctx.currentTime+.12;   // время берём ПОСЛЕ возобновления
  let acc=0;
  items.forEach(it=>{
   const st=t0+acc*beat,gate=Math.max(.16,Math.min(it.beats*beat*.9,it.beats>1?1.3:.7));
-  if(use)playTone(it.midi,st,gate);
-  const on=use?(st-ctx.currentTime)*1000:acc*beat*1000;
+  playTone(it.midi,st,gate);
+  const on=(st-ctx.currentTime)*1000;
   timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=it.cell;G.mysteryPlay=it.cell===-1;renderStage();},Math.max(0,on)));
   timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();},Math.max(0,on+gate*1000)));
   acc+=it.beats;
  });
- const end=(use?(t0+acc*beat-ctx.currentTime):acc*beat)*1000+220;
+ const end=(t0+acc*beat-ctx.currentTime)*1000+220;
  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();if(done)done();},Math.max(0,end)));
 }
 const SCALE_PATH=[0,1,2,3,4,5,6,7,6,5,4,3,2,1,0];
-function playScale(done){schedule(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
-function playTarget(done){schedule([{midi:G.target,cell:-1,beats:2}],done);}
+function playScale(done){return schedule(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
+function playTarget(done){return schedule([{midi:G.target,cell:-1,beats:2}],done);}
+function playWhole(done){
+ playScale(()=>{later(()=>{playTarget(()=>{G.heard=true;if(done)done();});},420);});
+}
 
 function rootFromPc(pc){let r=60+pc;if(r>66)r-=12;return r;}
 function newRound(){
@@ -280,50 +351,42 @@ function newRound(){
  G.scale=[0,1,2,3,4,5,6].map(d=>G.root+st[d]).concat([G.root+12]);
  G.deg=pick(TARGETS);
  G.target=G.root+st[G.deg];
- G.phase='idle';G.chosen=null;G.ok=null;G.keepResult=false;
+ G.phase='idle';G.chosen=null;G.ok=null;G.keepResult=false;G.heard=false;G.blocked=false;
  renderAll();
 }
 function runTask(){
- G.chosen=null;G.ok=null;G.keepResult=false;G.phase='playing';renderAll();
- playScale(()=>{later(()=>{playTarget(()=>{G.phase='question';renderAll();});},420);});
+ G.chosen=null;G.ok=null;G.keepResult=false;G.heard=false;G.phase='playing';renderAll();
+ playWhole(()=>{G.phase='question';renderAll();});
 }
 function answer(d){
  if(G.phase!=='question')return;
  G.chosen=d;G.ok=(d===G.deg);G.phase='result';renderAll();
 }
-/* «Послушать ещё раз»: заново гамма + нота, разбор остаётся на экране */
-function listenAgain(){
- if(G.phase!=='result')return;
- G.keepResult=true;G.phase='playing';renderAll();
- playScale(()=>{later(()=>{playTarget(()=>{G.phase='result';G.keepResult=false;renderAll();});},420);});
+/* одна кнопка на всё: гамма + пауза + нота */
+function replayAll(){
+ if(G.phase!=='question'&&G.phase!=='result')return;
+ const back=G.phase;
+ G.keepResult=(back==='result');G.phase='playing';renderAll();
+ playWhole(()=>{G.phase=back;G.keepResult=false;renderAll();});
 }
 function nextTask(){newRound();runTask();}
-function replayScale(){
- if(G.phase==='idle')return;
- const back=G.phase==='result'?'result':'question';
- G.phase='playing';renderAll();
- playScale(()=>{G.phase=back;renderAll();});
-}
-function replayTarget(){
- if(G.phase==='idle')return;
- const back=G.phase==='result'?'result':'question';
- G.phase='playing';renderAll();
- playTarget(()=>{G.phase=back;renderAll();});
+function stopToSafe(){
+ stopPlayback();G.keepResult=false;
+ G.phase=G.chosen!==null?'result':(G.heard?'question':'idle');
+ renderAll();
 }
 function primary(){
  const P=G.phase;
  if(P==='idle')runTask();
- else if(P==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
- else if(P==='question')replayTarget();
- else if(P==='result')listenAgain();
+ else if(P==='playing')stopToSafe();
+ else replayAll();
 }
 
-/* ---------- рендер ---------- */
+/* ================= РЕНДЕР ================= */
 function keyLabel(){return mname(G.root)+'-'+MODE_SH[G.mode]+' ('+RU[pcOf(G.root)]+' '+MODE_RU[G.mode]+')';}
 function revealed(){return settings.names||G.phase==='result'||G.keepResult;}
 function renderStage(){
- const strip=$('#strip');
- strip.innerHTML=G.scale.map((m,i)=>{
+ $('#strip').innerHTML=G.scale.map((m,i)=>{
   let c='cell';
   if(G.activeCell===i)c+=' on';
   if((G.phase==='result'||G.keepResult)&&i===G.deg)c+=' tgt';
@@ -331,8 +394,7 @@ function renderStage(){
   const ru=revealed()?RU[pcOf(m)]:'';
   return '<div class="'+c+'"><span class="rn">'+(i===7?'I':ROMAN[i])+'</span><span class="nn">'+nm+(ru?'<br>'+ru:'')+'</span></div>';
  }).join('');
- const mys=$('#mystery');
- mys.classList.toggle('play',G.mysteryPlay);
+ $('#mystery').classList.toggle('play',G.mysteryPlay);
  if(G.phase==='result'||G.keepResult){
   $('#mBig').textContent=ROMAN[G.deg];
   $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>.';
@@ -341,7 +403,7 @@ function renderStage(){
   $('#mTxt').innerHTML='Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.';
  }else{
   $('#mBig').textContent=G.mysteryPlay?'♪':'?';
-  $('#mTxt').innerHTML=G.mysteryPlay?'Слушай загаданную ноту…':'Нота прозвучала. Переслушай её кнопкой внизу или сравни с гаммой.';
+  $('#mTxt').innerHTML=G.mysteryPlay?'Слушай загаданную ноту…':'Нота прозвучала. Ответь кнопками ниже или переслушай всё целиком.';
  }
 }
 function renderAnswers(){
@@ -357,15 +419,19 @@ function renderAnswers(){
 }
 function renderStatus(){
  const P=G.phase;
- if(P==='idle')$('#status').innerHTML='Нажми <b>«Проиграть гамму»</b>: сначала гамма вверх и вниз, потом одна нота.';
- else if(P==='playing'&&G.keepResult)$('#status').innerHTML='Слушай ещё раз: гамма вверх и вниз, затем загаданная нота. Разбор ниже остаётся.';
- else if(P==='playing')$('#status').innerHTML='Слушай… '+($('#mystery').classList.contains('play')?'загаданная нота.':'гамма вверх и обратно вниз.');
- else if(P==='question')$('#status').innerHTML='Какая это ступень? Нажми <b>I</b>, <b>III</b> или <b>V</b>. Можно переслушать гамму и ноту.';
+ if(G.blocked){
+  $('#status').innerHTML='<span class="warn">Звук не запустился.</span> Нажми <b>«♪ Проверить звук»</b> наверху, затем проверь боковой переключатель «Бесшумно» и громкость.';
+  return;
+ }
+ if(P==='idle')$('#status').innerHTML='Нажми <b>«Проиграть гамму и ноту»</b>: гамма вверх и вниз, пауза, затем одна нота.';
+ else if(P==='playing'&&G.keepResult)$('#status').innerHTML='Слушай ещё раз: гамма вверх и вниз, затем загаданная нота. Разбор остаётся ниже.';
+ else if(P==='playing')$('#status').innerHTML='Слушай… '+(G.mysteryPlay?'загаданная нота.':'гамма вверх и обратно вниз.');
+ else if(P==='question')$('#status').innerHTML='Какая это ступень? Нажми <b>I</b>, <b>III</b> или <b>V</b>.';
  else{
   const note='<span class="dim">'+mlabel(G.target)+'</span>';
   $('#status').innerHTML=G.ok
    ?'<span class="good">✓ Верно!</span> Это <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note
-   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'. Жми «Послушать ещё раз» — гамма и нота прозвучат заново.';
+   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'.';
  }
 }
 function renderResult(){
@@ -381,13 +447,14 @@ function renderResult(){
 }
 function renderDock(){
  const P=G.phase,pri=$('#pri'),sec=$('#sec'),da=$('#da');
- sec.style.display=(P==='question'||P==='result')?'':'none';
- da.classList.toggle('single',sec.style.display==='none');
- if(P==='idle'){pri.textContent='▶ Проиграть гамму';}
- else if(P==='playing'){pri.textContent='⏹ Стоп';}
- else if(P==='question'){pri.textContent='▶ Загаданная нота';sec.textContent='↻ Гамма';}
- else{pri.textContent='↻ Послушать ещё раз';sec.textContent='Следующее задание →';}
- $('#ds').innerHTML=P==='idle'?'Шаг 1 · гамма':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — послушай ещё раз');
+ const showSec=P==='result';
+ sec.style.display=showSec?'':'none';
+ da.classList.toggle('single',!showSec);
+ if(P==='idle')pri.textContent='▶ Проиграть гамму и ноту';
+ else if(P==='playing')pri.textContent='⏹ Стоп';
+ else pri.textContent='↻ Послушать всё ещё раз';
+ sec.textContent='Следующее задание →';
+ $('#ds').innerHTML=P==='idle'?'Шаг 1 · слушай':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — послушай ещё раз');
 }
 function renderSettings(){
  $$('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===settings.mode));
@@ -400,27 +467,41 @@ function renderSettings(){
  $('#snd').innerHTML=settings.muted?'🔇 <span>Тихо</span>':'🔊 <span>Звук</span>';
  $('#sub').textContent=revealed()?keyLabel():'тональность скрыта до ответа';
  $('#ttl').textContent=G.phase==='idle'?'Гамма и загаданная нота':'Задание: I, III или V';
+ renderAudioState();
 }
-function renderAll(){renderSettings();renderStage();renderAnswers();renderStatus();renderResult();renderDock();
- document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px');}
+function renderAll(){
+ renderSettings();renderStage();renderAnswers();renderStatus();renderResult();renderDock();
+ document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px');
+}
 
-/* ---------- события ---------- */
+/* ================= СОБЫТИЯ ================= */
 $('#pri').addEventListener('click',primary);
-$('#sec').addEventListener('click',()=>{
- if(G.phase==='question')replayScale();
- else if(G.phase==='result')nextTask();
-});
+$('#sec').addEventListener('click',()=>{if(G.phase==='result')nextTask();});
 $$('.ans').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.d)));
+$('#test').addEventListener('click',async()=>{
+ const ctx=await unlockAudio();
+ if(!ctx){G.blocked=true;renderAll();return;}
+ G.blocked=false;
+ playTone(G.root,ctx.currentTime+.05,.7);
+ renderAll();
+});
 $$('#segMode button').forEach(b=>b.addEventListener('click',()=>{settings.mode=b.dataset.m;save();newRound();}));
 $('#key').addEventListener('change',e=>{settings.key=e.target.value;save();newRound();});
 $('#bpm').addEventListener('input',e=>{settings.bpm=+e.target.value;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;save();});
 $$('.presets button').forEach(b=>b.addEventListener('click',()=>{settings.bpm=+b.dataset.b;save();renderSettings();}));
 $('#swNames').addEventListener('click',()=>{settings.names=!settings.names;save();renderAll();});
-$('#snd').addEventListener('click',()=>{
+$('#snd').addEventListener('click',async()=>{
  settings.muted=!settings.muted;save();
- if(settings.muted){stopPlayback();if(master)master.gain.value=0;}
- else{ensureAudio();if(master)master.gain.value=.8;}
- renderSettings();
+ if(settings.muted){
+  stopPlayback();
+  if(master)master.gain.value=0;
+  if(silentEl){try{silentEl.pause();}catch(e){}}
+  audioState='muted';
+ }else{
+  await unlockAudio();
+  if(master)master.gain.value=.85;
+ }
+ renderAll();
 });
 document.addEventListener('keydown',e=>{
  const t=(document.activeElement&&document.activeElement.tagName)||'';
@@ -429,15 +510,16 @@ document.addEventListener('keydown',e=>{
  else if(e.code==='Digit2'){e.preventDefault();answer(2);}
  else if(e.code==='Digit3'){e.preventDefault();answer(4);}
  else if(e.code==='Space'||e.code==='Enter'){e.preventDefault();primary();}
- else if(e.code==='KeyG'){e.preventDefault();replayScale();}
- else if(e.code==='KeyN'){e.preventDefault();replayTarget();}
- else if(e.code==='Escape'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
+ else if(e.code==='KeyR'){e.preventDefault();replayAll();}
+ else if(e.code==='Escape'){stopToSafe();}
 });
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden&&G.phase==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
+ if(document.hidden){if(G.phase==='playing')stopToSafe();}
+ else if(!settings.muted&&audio&&audio.state!=='running')unlockAudio();
 });
+window.addEventListener('pageshow',()=>{if(!settings.muted&&audio&&audio.state!=='running')unlockAudio();});
 
-/* ---------- старт ---------- */
+/* ================= СТАРТ ================= */
 $('#key').innerHTML='<option value="random">🎲 Случайная тональность</option>'+NN.map((n,i)=>'<option value="'+i+'">'+n+' ('+RU[i]+')</option>').join('');
 newRound();
 if('ResizeObserver'in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px')).observe($('#dock'));
