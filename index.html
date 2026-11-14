@@ -152,7 +152,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  </section>
 
  <section class="card hint">
-  <b>Схема:</b> звучит гамма вверх до верхней тоники и обратно вниз — это даёт уху опору. Потом отдельно звучит одна нота: I, III или V. Определи её на слух. Ошибся — жми «Попробовать это же ещё раз»: тональность и нота останутся теми же, можно переслушать гамму и сравнить.<br><br>
+  <b>Схема:</b> звучит гамма вверх до верхней тоники и обратно вниз — это даёт уху опору. Потом отдельно звучит одна нота: I, III или V. Определи её на слух. После ответа жми <b>«Послушать ещё раз»</b> — гамма и нота прозвучат заново, а разбор останется на экране: можно сравнить загаданную ноту с тоникой и другими опорными звуками.<br><br>
   <b>Нагрузка:</b> без canvas и покадровых циклов, звук событийный, интерфейс статичный.
  </section>
 </main>
@@ -242,7 +242,7 @@ function playTone(midi,t,gate){
 document.addEventListener('pointerdown',()=>{if(!settings.muted)ensureAudio();},{once:true,capture:true});
 
 /* ---------- состояние ---------- */
-const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,activeCell:-1,mysteryPlay:false};
+const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,activeCell:-1,mysteryPlay:false,keepResult:false};
 let token=0,timers=[],gapTimer=null;
 function later(fn,ms){clearTimeout(gapTimer);gapTimer=setTimeout(fn,ms);}
 function stopPlayback(){
@@ -280,18 +280,23 @@ function newRound(){
  G.scale=[0,1,2,3,4,5,6].map(d=>G.root+st[d]).concat([G.root+12]);
  G.deg=pick(TARGETS);
  G.target=G.root+st[G.deg];
- G.phase='idle';G.chosen=null;G.ok=null;
+ G.phase='idle';G.chosen=null;G.ok=null;G.keepResult=false;
  renderAll();
 }
 function runTask(){
- G.chosen=null;G.ok=null;G.phase='playing';renderAll();
+ G.chosen=null;G.ok=null;G.keepResult=false;G.phase='playing';renderAll();
  playScale(()=>{later(()=>{playTarget(()=>{G.phase='question';renderAll();});},420);});
 }
 function answer(d){
  if(G.phase!=='question')return;
  G.chosen=d;G.ok=(d===G.deg);G.phase='result';renderAll();
 }
-function retrySame(){G.chosen=null;G.ok=null;runTask();}
+/* «Послушать ещё раз»: заново гамма + нота, разбор остаётся на экране */
+function listenAgain(){
+ if(G.phase!=='result')return;
+ G.keepResult=true;G.phase='playing';renderAll();
+ playScale(()=>{later(()=>{playTarget(()=>{G.phase='result';G.keepResult=false;renderAll();});},420);});
+}
 function nextTask(){newRound();runTask();}
 function replayScale(){
  if(G.phase==='idle')return;
@@ -308,27 +313,27 @@ function replayTarget(){
 function primary(){
  const P=G.phase;
  if(P==='idle')runTask();
- else if(P==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';if(G.scale.length&&!G.startedOnce)G.phase='question';renderAll();}
+ else if(P==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
  else if(P==='question')replayTarget();
- else if(P==='result'){G.ok?nextTask():retrySame();}
+ else if(P==='result')listenAgain();
 }
 
 /* ---------- рендер ---------- */
 function keyLabel(){return mname(G.root)+'-'+MODE_SH[G.mode]+' ('+RU[pcOf(G.root)]+' '+MODE_RU[G.mode]+')';}
-function revealed(){return settings.names||G.phase==='result';}
+function revealed(){return settings.names||G.phase==='result'||G.keepResult;}
 function renderStage(){
  const strip=$('#strip');
  strip.innerHTML=G.scale.map((m,i)=>{
   let c='cell';
   if(G.activeCell===i)c+=' on';
-  if(G.phase==='result'&&i===G.deg)c+=' tgt';
+  if((G.phase==='result'||G.keepResult)&&i===G.deg)c+=' tgt';
   const nm=revealed()?mname(m):'•••';
   const ru=revealed()?RU[pcOf(m)]:'';
   return '<div class="'+c+'"><span class="rn">'+(i===7?'I':ROMAN[i])+'</span><span class="nn">'+nm+(ru?'<br>'+ru:'')+'</span></div>';
  }).join('');
  const mys=$('#mystery');
  mys.classList.toggle('play',G.mysteryPlay);
- if(G.phase==='result'){
+ if(G.phase==='result'||G.keepResult){
   $('#mBig').textContent=ROMAN[G.deg];
   $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>.';
  }else if(G.phase==='idle'){
@@ -344,7 +349,7 @@ function renderAnswers(){
   const b=$('#a'+d);
   b.disabled=G.phase!=='question';
   b.classList.remove('hit','miss');
-  if(G.phase==='result'){
+  if(G.phase==='result'||G.keepResult){
    if(d===G.deg)b.classList.add('hit');
    else if(d===G.chosen)b.classList.add('miss');
   }
@@ -353,17 +358,18 @@ function renderAnswers(){
 function renderStatus(){
  const P=G.phase;
  if(P==='idle')$('#status').innerHTML='Нажми <b>«Проиграть гамму»</b>: сначала гамма вверх и вниз, потом одна нота.';
+ else if(P==='playing'&&G.keepResult)$('#status').innerHTML='Слушай ещё раз: гамма вверх и вниз, затем загаданная нота. Разбор ниже остаётся.';
  else if(P==='playing')$('#status').innerHTML='Слушай… '+($('#mystery').classList.contains('play')?'загаданная нота.':'гамма вверх и обратно вниз.');
  else if(P==='question')$('#status').innerHTML='Какая это ступень? Нажми <b>I</b>, <b>III</b> или <b>V</b>. Можно переслушать гамму и ноту.';
  else{
   const note='<span class="dim">'+mlabel(G.target)+'</span>';
   $('#status').innerHTML=G.ok
    ?'<span class="good">✓ Верно!</span> Это <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note
-   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'. Жми «Попробовать это же ещё раз».';
+   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'. Жми «Послушать ещё раз» — гамма и нота прозвучат заново.';
  }
 }
 function renderResult(){
- const show=G.phase==='result';
+ const show=G.phase==='result'||G.keepResult;
  $('#res').classList.toggle('show',show);
  if(!show)return;
  $('#keyline').textContent='Тональность: '+keyLabel()+' · тоника '+mlabel(G.root);
@@ -380,8 +386,8 @@ function renderDock(){
  if(P==='idle'){pri.textContent='▶ Проиграть гамму';}
  else if(P==='playing'){pri.textContent='⏹ Стоп';}
  else if(P==='question'){pri.textContent='▶ Загаданная нота';sec.textContent='↻ Гамма';}
- else{pri.textContent=G.ok?'Следующее задание →':'↻ Попробовать это же ещё раз';sec.textContent=G.ok?'↻ Это же':'Следующее →';}
- $('#ds').innerHTML=P==='idle'?'Шаг 1 · гамма':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — разбери и повтори');
+ else{pri.textContent='↻ Послушать ещё раз';sec.textContent='Следующее задание →';}
+ $('#ds').innerHTML=P==='idle'?'Шаг 1 · гамма':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — послушай ещё раз');
 }
 function renderSettings(){
  $$('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===settings.mode));
@@ -402,7 +408,7 @@ function renderAll(){renderSettings();renderStage();renderAnswers();renderStatus
 $('#pri').addEventListener('click',primary);
 $('#sec').addEventListener('click',()=>{
  if(G.phase==='question')replayScale();
- else if(G.phase==='result'){G.ok?retrySame():nextTask();}
+ else if(G.phase==='result')nextTask();
 });
 $$('.ans').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.d)));
 $$('#segMode button').forEach(b=>b.addEventListener('click',()=>{settings.mode=b.dataset.m;save();newRound();}));
@@ -425,9 +431,11 @@ document.addEventListener('keydown',e=>{
  else if(e.code==='Space'||e.code==='Enter'){e.preventDefault();primary();}
  else if(e.code==='KeyG'){e.preventDefault();replayScale();}
  else if(e.code==='KeyN'){e.preventDefault();replayTarget();}
- else if(e.code==='Escape'){stopPlayback();renderAll();}
+ else if(e.code==='Escape'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.phase==='playing'){stopPlayback();G.phase='question';renderAll();}});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden&&G.phase==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';G.keepResult=false;renderAll();}
+});
 
 /* ---------- старт ---------- */
 $('#key').innerHTML='<option value="random">🎲 Случайная тональность</option>'+NN.map((n,i)=>'<option value="'+i+'">'+n+' ('+RU[i]+')</option>').join('');
