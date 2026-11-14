@@ -35,15 +35,26 @@ main{max-width:680px;margin:0 auto;padding:12px 12px calc(var(--dock-h) + 22px);
 .chip{font-size:11px;font-weight:800;padding:5px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(139,92,246,.07);white-space:nowrap}
 .chip.hot{color:#FFD48A;border-color:rgba(255,178,36,.4);background:rgba(255,178,36,.08)}
 .strip{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
-.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;border-radius:10px;background:#100D22;border:1.5px solid var(--line);padding:6px 2px}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;border-radius:10px;background:#100D22;border:1.5px solid var(--line);padding:6px 2px;transition:transform .08s,border-color .12s,background .12s,box-shadow .12s}
+.cell:disabled{opacity:1}
 .cell .rn{font-size:11px;font-weight:900;color:#C4B5FD}
 .cell .nn{font-size:8.5px;font-weight:800;color:var(--dim);font-family:ui-monospace,Menlo,monospace;text-align:center;line-height:1.15}
 .cell.on{border-color:var(--cyan);background:rgba(57,213,255,.16)}
+.cell.tap{cursor:pointer;box-shadow:0 0 0 1px rgba(139,92,246,.28) inset}
+.cell.tap:active{transform:scale(.94)}
 .cell.tgt{border-color:var(--amber);background:rgba(255,178,36,.14)}
-.mystery{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:12px;background:var(--card2);border:1.5px solid var(--line)}
+.cell.ring{border-color:var(--amber)!important;background:rgba(255,178,36,.24)!important;box-shadow:0 0 0 1px rgba(255,178,36,.45) inset!important}
+@media(hover:hover){.cell.tap:hover{border-color:var(--vio);background:rgba(139,92,246,.14)}}
+.strip-hint{margin-top:9px;font-size:11px;font-weight:700;color:var(--dim);line-height:1.45}
+.strip-hint.on{color:#FFD48A}
+.mystery{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:12px;padding:12px;border-radius:12px;background:var(--card2);border:1.5px solid var(--line);transition:transform .08s,border-color .12s,background .12s,box-shadow .12s}
+.mystery:disabled{opacity:1}
 .mystery.play{border-color:var(--amber);background:rgba(255,178,36,.12)}
-.mystery .big{font-size:26px;font-weight:900;color:#FFD48A;min-width:44px;text-align:center}
-.mystery .txt{font-size:12.5px;font-weight:700;color:#D6CFF0;line-height:1.4}
+.mystery.tap{cursor:pointer;box-shadow:0 0 0 1px rgba(139,92,246,.28) inset}
+.mystery.tap:active{transform:scale(.99)}
+.mystery.ring{border-color:var(--amber)!important;background:rgba(255,178,36,.2)!important}
+.mystery .big{display:block;flex:none;font-size:26px;font-weight:900;color:#FFD48A;min-width:44px;text-align:center}
+.mystery .txt{display:block;font-size:12.5px;font-weight:700;color:#D6CFF0;line-height:1.4}
 .status{min-height:40px;font-size:13px;font-weight:600;color:#D6CFF0;line-height:1.45;margin-top:10px}
 .status .good{color:var(--green)}.status .bad{color:var(--red)}.status .warn{color:var(--amber)}
 .status .dim{color:var(--dim);font-family:ui-monospace,Menlo,monospace;font-size:11px}
@@ -116,10 +127,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
    <div class="chips"><span class="chip" id="cMode"></span><span class="chip hot" id="cBpm"></span></div>
   </div>
   <div class="strip" id="strip"></div>
-  <div class="mystery" id="mystery">
-   <div class="big" id="mBig">?</div>
-   <div class="txt" id="mTxt">Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.</div>
-  </div>
+  <div class="strip-hint" id="stripHint"></div>
+  <button type="button" class="mystery" id="mystery" disabled>
+   <span class="big" id="mBig">?</span>
+   <span class="txt" id="mTxt">Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.</span>
+  </button>
   <div class="status" id="status" role="status" aria-live="polite"></div>
  </section>
 
@@ -152,7 +164,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
  </section>
 
  <section class="card hint">
-  <b>Схема:</b> гамма вверх до верхней тоники и обратно вниз, пауза, затем загаданная нота — I, III или V. Кнопка <b>«Послушать всё ещё раз»</b> повторяет всю связку целиком, разбор при этом остаётся на экране. Подсветка ступеней синхронизирована со звуком с учётом задержки аудиовыхода.
+  <b>Схема:</b> гамма вверх до верхней тоники и обратно вниз, пауза, затем загаданная нота — I, III или V. После ответа ступени становятся кнопками: нажимай любую, чтобы услышать её и сравнить с загаданной нотой. Карточка загаданной ноты тоже нажимается. Кнопка <b>«Послушать всё ещё раз»</b> повторяет всю связку целиком, разбор при этом остаётся на экране.
  </section>
 </main>
 
@@ -182,7 +194,7 @@ const ROMAN=['I','II','III','IV','V','VI','VII'];
 const TARGETS=[0,2,4];
 const DEG_NAME={0:'Тоника',2:'Медианта',4:'Доминанта'};
 
-const STORE='stupeni.gamma.v4';
+const STORE='stupeni.gamma.v5';
 const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false};
 let settings={...DEF};
 try{Object.assign(settings,JSON.parse(localStorage.getItem(STORE)||'{}'));}catch(e){}
@@ -275,7 +287,6 @@ document.addEventListener('pointerdown',()=>{
  if(!settings.muted&&(!audio||audio.state!=='running'))unlockAudio();
 },{capture:true});
 
-/* Точная привязка подсветки к моменту вывода звука, а не к моменту планирования */
 function visualDelayMs(ctx,audioTime){
  const now=performance.now();
  try{
@@ -294,11 +305,25 @@ function visualDelayMs(ctx,audioTime){
 const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,
  activeCell:-1,mysteryPlay:false,keepResult:false,heard:false,blocked:false};
 let token=0,timers=[],gapTimer=null;
+const tapTimers=new Set();
+function clearTapFlashes(){tapTimers.forEach(clearTimeout);tapTimers.clear();}
 function later(fn,ms){clearTimeout(gapTimer);gapTimer=setTimeout(fn,ms);}
 function stopPlayback(){
  token++;timers.forEach(clearTimeout);timers=[];clearTimeout(gapTimer);
  live.forEach(o=>{try{o.stop()}catch(e){}});live.clear();
  G.activeCell=-1;G.mysteryPlay=false;
+}
+function unlocked(){return G.phase==='result'||G.keepResult;}
+async function tapNote(midi,el){
+ if(!unlocked())return;
+ const ctx=await unlockAudio();
+ if(!ctx||settings.muted)return;
+ playTone(midi,ctx.currentTime+.02,.9);
+ if(el){
+  el.classList.add('ring');
+  const id=setTimeout(()=>{el.classList.remove('ring');tapTimers.delete(id);},900);
+  tapTimers.add(id);
+ }
 }
 async function schedule(items,done){
  stopPlayback();
@@ -317,7 +342,7 @@ async function schedule(items,done){
   const st=t0+acc*beat,gate=Math.max(.16,Math.min(it.beats*beat*.9,it.beats>1?1.3:.7));
   playTone(it.midi,st,gate);
   timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=it.cell;G.mysteryPlay=it.cell===-1;renderStage();},visualDelayMs(ctx,st)));
-  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();},visualDelayMs(ctx,st+gate)));
+  timers.push(setTimeout(()=>{if(tk!==token)return;if(G.activeCell===it.cell)G.activeCell=-1;G.mysteryPlay=false;renderStage();},visualDelayMs(ctx,st+gate)));
   acc+=it.beats;
  });
  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();if(done)done();},visualDelayMs(ctx,t0+acc*beat)+180));
@@ -331,7 +356,7 @@ function playWhole(done){
 
 function rootFromPc(pc){let r=60+pc;if(r>66)r-=12;return r;}
 function newRound(){
- stopPlayback();
+ stopPlayback();clearTapFlashes();
  const pc=settings.key==='random'?rand(0,11):+settings.key;
  G.root=rootFromPc(pc);
  G.mode=settings.mode==='random'?pick(['major','minor']):settings.mode;
@@ -371,20 +396,34 @@ function primary(){
 
 /* ================= РЕНДЕР ================= */
 function keyLabel(){return mname(G.root)+'-'+MODE_SH[G.mode]+' ('+RU[pcOf(G.root)]+' '+MODE_RU[G.mode]+')';}
-function revealed(){return settings.names||G.phase==='result'||G.keepResult;}
+function revealed(){return settings.names||unlocked();}
 function renderStage(){
+ clearTapFlashes();
+ const open=unlocked();
  $('#strip').innerHTML=G.scale.map((m,i)=>{
+  const rn=i===7?'I':ROMAN[i];
   let c='cell';
   if(G.activeCell===i)c+=' on';
-  if((G.phase==='result'||G.keepResult)&&i===G.deg)c+=' tgt';
+  if(open&&i===G.deg)c+=' tgt';
+  if(open)c+=' tap';
   const nm=revealed()?mname(m):'•••';
   const ru=revealed()?RU[pcOf(m)]:'';
-  return '<div class="'+c+'"><span class="rn">'+(i===7?'I':ROMAN[i])+'</span><span class="nn">'+nm+(ru?'<br>'+ru:'')+'</span></div>';
+  const label='Ступень '+rn+(revealed()?', нота '+mlabel(m):'')+(open?' — нажми, чтобы услышать':'');
+  return '<button type="button" class="'+c+'" data-i="'+i+'" '+(open?'':'disabled')+' aria-label="'+label+'"><span class="rn">'+rn+'</span><span class="nn">'+nm+(ru?'<br>'+ru:'')+'</span></button>';
  }).join('');
- $('#mystery').classList.toggle('play',G.mysteryPlay);
- if(G.phase==='result'||G.keepResult){
+ const hint=$('#stripHint');
+ hint.classList.toggle('on',open);
+ hint.innerHTML=open
+  ?'♪ Нажимай на любую ступень — она прозвучит. Так сравниваешь загаданную ноту с тоникой и остальными.'
+  :'Ступени откроются для прослушивания после того, как ты выберешь ответ.';
+ const mys=$('#mystery');
+ mys.disabled=!open;
+ mys.classList.toggle('tap',open);
+ mys.classList.toggle('play',G.mysteryPlay);
+ mys.setAttribute('aria-label',open?'Загаданная нота '+mlabel(G.target)+' — нажми, чтобы услышать':'Загаданная нота');
+ if(open){
   $('#mBig').textContent=ROMAN[G.deg];
-  $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>.';
+  $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>. Нажми, чтобы услышать её снова.';
  }else if(G.phase==='idle'){
   $('#mBig').textContent='?';
   $('#mTxt').innerHTML='Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.';
@@ -398,7 +437,7 @@ function renderAnswers(){
   const b=$('#a'+d);
   b.disabled=G.phase!=='question';
   b.classList.remove('hit','miss');
-  if(G.phase==='result'||G.keepResult){
+  if(unlocked()){
    if(d===G.deg)b.classList.add('hit');
    else if(d===G.chosen)b.classList.add('miss');
   }
@@ -424,7 +463,7 @@ function renderStatus(){
  }
 }
 function renderResult(){
- const show=G.phase==='result'||G.keepResult;
+ const show=unlocked();
  $('#res').classList.toggle('show',show);
  if(!show)return;
  $('#keyline').textContent='Тональность: '+keyLabel()+' · тоника '+mlabel(G.root);
@@ -466,6 +505,12 @@ function renderAll(){
 $('#pri').addEventListener('click',primary);
 $('#sec').addEventListener('click',()=>{if(G.phase==='result')nextTask();});
 $$('.ans').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.d)));
+$('#strip').addEventListener('click',e=>{
+ const b=e.target.closest('.cell');
+ if(!b||b.disabled||!unlocked())return;
+ tapNote(G.scale[+b.dataset.i],b);
+});
+$('#mystery').addEventListener('click',()=>{if(unlocked())tapNote(G.target,$('#mystery'));});
 $$('#segMode button').forEach(b=>b.addEventListener('click',()=>{settings.mode=b.dataset.m;save();newRound();}));
 $('#key').addEventListener('change',e=>{settings.key=e.target.value;save();newRound();});
 $('#bpm').addEventListener('input',e=>{settings.bpm=+e.target.value;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;save();});
@@ -474,7 +519,7 @@ $('#swNames').addEventListener('click',()=>{settings.names=!settings.names;save(
 $('#snd').addEventListener('click',async()=>{
  settings.muted=!settings.muted;save();
  if(settings.muted){
-  stopPlayback();
+  stopPlayback();clearTapFlashes();
   if(master)master.gain.value=0;
   if(silentEl){try{silentEl.pause();}catch(e){}}
   G.keepResult=false;
@@ -488,6 +533,7 @@ $('#snd').addEventListener('click',async()=>{
 document.addEventListener('keydown',e=>{
  const t=(document.activeElement&&document.activeElement.tagName)||'';
  if(['INPUT','SELECT','TEXTAREA'].includes(t))return;
+ if(e.target.closest&&e.target.closest('#strip,#mystery'))return;
  if(e.code==='Digit1'){e.preventDefault();answer(0);}
  else if(e.code==='Digit2'){e.preventDefault();answer(2);}
  else if(e.code==='Digit3'){e.preventDefault();answer(4);}
