@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#0A0816">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Ступени · Треки">
-<title>СТУПЕНИ · Треки</title>
+<meta name="apple-mobile-web-app-title" content="Ступени · Гамма">
+<title>СТУПЕНИ · Гамма</title>
 <style>
-:root{--bg:#0A0816;--card:#16112E;--card2:#1D1740;--line:#32295C;--text:#F2EEFC;--muted:#A79FC8;--dim:#746C99;--vio:#8B5CF6;--mag:#D946EF;--amber:#FFB224;--green:#8FE86B;--red:#FF6B87;--cyan:#39D5FF;--dock-h:118px}
+:root{--bg:#0A0816;--card:#16112E;--card2:#1D1740;--line:#32295C;--text:#F2EEFC;--muted:#A79FC8;--dim:#746C99;--vio:#8B5CF6;--mag:#D946EF;--amber:#FFB224;--blue:#6E9BFF;--green:#8FE86B;--red:#FF6B87;--cyan:#39D5FF;--dock-h:118px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:radial-gradient(660px 400px at 12% -10%,#241448 0%,rgba(36,20,72,0) 62%),radial-gradient(600px 380px at 108% 8%,#30123F 0%,rgba(48,18,63,0) 58%),var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;touch-action:manipulation}
@@ -28,116 +28,120 @@ button:disabled{cursor:default}
 main{max-width:680px;margin:0 auto;padding:12px 12px calc(var(--dock-h) + 22px);display:flex;flex-direction:column;gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
 .card h2{font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:#C4B5FD;margin-bottom:11px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.title{font-size:16px;font-weight:900;line-height:1.25}
+.sub{font-size:11px;color:var(--muted);margin-top:3px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:800;padding:5px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(139,92,246,.07);white-space:nowrap}
+.chip.hot{color:#FFD48A;border-color:rgba(255,178,36,.4);background:rgba(255,178,36,.08)}
+.strip{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;border-radius:10px;background:#100D22;border:1.5px solid var(--line);padding:6px 2px}
+.cell .rn{font-size:11px;font-weight:900;color:#C4B5FD}
+.cell .nn{font-size:8.5px;font-weight:800;color:var(--dim);font-family:ui-monospace,Menlo,monospace;text-align:center;line-height:1.15}
+.cell.on{border-color:var(--cyan);background:rgba(57,213,255,.16)}
+.cell.tgt{border-color:var(--amber);background:rgba(255,178,36,.14)}
+.mystery{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:12px;background:var(--card2);border:1.5px solid var(--line)}
+.mystery.play{border-color:var(--amber);background:rgba(255,178,36,.12)}
+.mystery .big{font-size:26px;font-weight:900;color:#FFD48A;min-width:44px;text-align:center}
+.mystery .txt{font-size:12.5px;font-weight:700;color:#D6CFF0;line-height:1.4}
+.status{min-height:40px;font-size:13px;font-weight:600;color:#D6CFF0;line-height:1.45;margin-top:10px}
+.status .good{color:var(--green)}.status .bad{color:var(--red)}.status .warn{color:var(--amber)}
+.status .dim{color:var(--dim);font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ans{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px;border-radius:14px;background:var(--card2);border:1.5px solid var(--bc);min-height:78px;transition:transform .08s,border-color .12s,background .12s}
+.ans .rn{font-size:21px;font-weight:900;color:var(--c);line-height:1}
+.ans .nm{font-size:9.5px;font-weight:900;letter-spacing:.06em;color:var(--text);text-align:center}
+.ans:active:not(:disabled){transform:scale(.96)}
+.ans:disabled{opacity:.45}
+#a0{--c:var(--amber);--bc:rgba(255,178,36,.45)}
+#a2{--c:#C9BFFF;--bc:rgba(201,191,255,.4)}
+#a4{--c:var(--blue);--bc:rgba(110,155,255,.45)}
+.ans.hit{border-color:var(--green)!important;background:rgba(143,232,107,.18)!important;opacity:1!important}
+.ans.miss{border-color:var(--red)!important;background:rgba(255,107,135,.16)!important;opacity:1!important}
 .seg{display:flex;gap:3px;background:#0C0919;border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:10px}
 .seg button{flex:1;padding:9px 4px;border-radius:8px;font-size:11px;font-weight:900;color:var(--muted);min-height:38px}
 .seg button.on{background:var(--vio);color:#fff}
-input[type=text],input[type=url]{width:100%;min-height:46px;background:#0C0919;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;font-size:13px;font-weight:600}
 select{width:100%;min-height:46px;background:#0C0919;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0 34px 0 12px;font:inherit;font-size:13px;font-weight:700;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4B5FD' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
-.file-lbl{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border:1.5px dashed var(--line);border-radius:12px;background:rgba(139,92,246,.06);color:#C4B5FD;font-weight:800;font-size:13px;cursor:pointer}
-input[type=file]{display:none}
-audio{width:100%;margin-top:10px;border-radius:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:12.5px;padding:10px 12px;border-radius:11px;border:1px solid transparent;min-height:44px;user-select:none}
-.btn.primary{background:linear-gradient(135deg,var(--vio),var(--mag));color:#fff}
-.btn.ghost{border-color:var(--line);color:#C4B5FD;background:rgba(139,92,246,.06)}
-.btn.mini{min-height:38px;padding:8px 10px;font-size:11.5px}
-.btn:active:not(:disabled){transform:scale(.98)}
-.btn:disabled{opacity:.45}
-.btn.on{border-color:var(--amber);color:#FFD48A;background:rgba(255,178,36,.1)}
-.status{min-height:38px;font-size:13px;font-weight:600;color:#D6CFF0;line-height:1.45;margin-top:8px}
-.status .good{color:var(--green)}.status .bad{color:var(--red)}.status .warn{color:var(--amber)}
-.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
-.chip{font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(139,92,246,.07)}
-.chip.on{color:#FFD48A;border-color:rgba(255,178,36,.45);background:rgba(255,178,36,.1)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-top:10px}
-.nb{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:66px;padding:14px 4px 8px;border-radius:12px;background:var(--card2);border:1.5px solid var(--line);transition:transform .08s,border-color .12s,background .12s}
-.nb:active:not(:disabled){transform:scale(.96)}
-.nb:disabled{opacity:.5}
-.nb .pos{position:absolute;top:4px;left:7px;font-size:9px;font-weight:800;color:var(--dim)}
-.nb .nm{font-size:14px;font-weight:900}
-.nb .ru{font-size:10px;font-weight:700;color:var(--muted)}
-.nb.sel{border-color:var(--amber);background:rgba(255,178,36,.14)}
-.nb.sel::after{content:'●';position:absolute;top:4px;right:7px;font-size:10px;color:var(--amber)}
-.nb.hit{border-color:var(--green);background:rgba(143,232,107,.16)}
-.nb.hit::after{content:'✓';position:absolute;top:4px;right:7px;font-weight:900;color:var(--green)}
-.nb.miss{border-color:var(--red);background:rgba(255,107,135,.14)}
-.nb.miss::after{content:'✕';position:absolute;top:4px;right:7px;font-weight:900;color:var(--red)}
-.nb.answer{border-color:var(--amber);border-style:dashed;background:rgba(255,178,36,.08)}
+.ctl{margin-bottom:10px}
+.ctl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.ctl-top label{font-size:12px;font-weight:800;color:#D6CFF0}
+.val{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#FFD48A}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--vio),var(--mag))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--text);border:3px solid var(--vio);margin-top:-8px}
+input[type=range]::-moz-range-track{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--vio),var(--mag))}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--text);border:3px solid var(--vio)}
+.presets{display:flex;gap:5px;margin-top:4px}
+.presets button{flex:1;font-size:10px;font-weight:800;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 3px;min-height:34px}
+.tgl{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:rgba(139,92,246,.05)}
+.tgl span{font-size:11.5px;font-weight:800;color:#D6CFF0}
+.tgl small{display:block;font-size:10px;color:var(--dim);font-weight:600;margin-top:2px}
+.sw{position:relative;width:38px;height:22px;flex:none;border-radius:999px;background:#241C48;border:1px solid var(--line)}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted)}
+.sw.on{background:var(--vio);border-color:var(--vio)}
+.sw.on::after{left:18px;background:#fff}
 .res{display:none;border-color:rgba(143,232,107,.35)}
 .res.show{display:block}
 .keyline{font-size:15px;font-weight:900;color:#FFD48A;line-height:1.35;margin-bottom:8px}
-.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:10px}
-.li{font-size:11px;font-weight:700;color:var(--muted);padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:#0C0919}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.li{font-size:11px;font-weight:700;color:var(--muted);padding:8px;border-radius:9px;border:1px solid var(--line);background:#0C0919;text-align:center}
 .li.t{border-color:rgba(255,178,36,.45);color:#FFD48A;background:rgba(255,178,36,.08)}
-.li b{color:var(--text)}
+.li b{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
 .hint{font-size:11.5px;color:var(--muted);line-height:1.55}
 .hint b{color:#D6CFF0}
-.hint a{color:#C4B5FD}
-.masked{font-family:ui-monospace,Menlo,monospace;letter-spacing:.2em;color:var(--dim)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ctl{margin-bottom:10px}
-.ctl label{display:block;font-size:12px;font-weight:800;color:#D6CFF0;margin-bottom:5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:13px;padding:11px 12px;border-radius:12px;border:1px solid transparent;min-height:48px;user-select:none}
+.btn.primary{background:linear-gradient(135deg,var(--vio),var(--mag));color:#fff}
+.btn.ghost{border-color:var(--line);color:#C4B5FD;background:rgba(139,92,246,.06)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn:disabled{opacity:.45}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom))}
 .dock-in{max-width:680px;margin:0 auto}
 .ds{font-size:12px;font-weight:800;color:#D6CFF0;text-align:center;margin-bottom:8px;min-height:17px}
-.da{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
+.da{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
 .da.single{grid-template-columns:1fr}
-@media(max-width:380px){.two{grid-template-columns:1fr}.bs{display:none}.grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}}
+@media(max-width:380px){.bs{display:none}.strip{gap:3px}.cell{min-height:52px}.cell .nn{font-size:7.5px}.ans .rn{font-size:18px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-in">
- <div class="brand"><div class="mark">I–V</div><div><div class="bn">СТУПЕНИ · ТРЕКИ</div><div class="bs">реальная музыка · поиск тоники и ступеней</div></div></div>
- <button id="snd" class="snd">🔊 <span>Подзвучка</span></button>
+ <div class="brand"><div class="mark">I·III·V</div><div><div class="bn">СТУПЕНИ · ГАММА</div><div class="bs">гамма → нота → угадай ступень</div></div></div>
+ <button id="snd" class="snd">🔊 <span>Звук</span></button>
 </div></header>
 
 <main>
  <section class="card">
-  <h2>1 · Трек</h2>
-  <div class="seg" id="segSrc"><button data-src="file">Файл с телефона</button><button data-src="url">Прямая ссылка</button></div>
-  <div id="paneFile">
-   <label class="file-lbl" for="file">📁 Выбрать аудио из «Файлов»</label>
-   <input type="file" id="file" accept="audio/*">
+  <div class="head">
+   <div><h1 class="title" id="ttl">Гамма и загаданная нота</h1><div class="sub" id="sub">тональность скрыта до ответа</div></div>
+   <div class="chips"><span class="chip" id="cMode"></span><span class="chip hot" id="cBpm"></span></div>
   </div>
-  <div id="paneUrl" style="display:none">
-   <input type="url" id="url" placeholder="https://…/track.mp3" inputmode="url" autocomplete="off">
-   <div class="row" style="margin-top:8px"><button class="btn ghost" id="loadUrl">Загрузить ссылку</button></div>
+  <div class="strip" id="strip"></div>
+  <div class="mystery" id="mystery">
+   <div class="big" id="mBig">?</div>
+   <div class="txt" id="mTxt">Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.</div>
   </div>
-  <audio id="player" controls playsinline preload="metadata"></audio>
-  <div class="row" style="margin-top:8px">
-   <button class="btn ghost mini" id="back5">−5 с</button>
-   <button class="btn ghost mini" id="fwd5">+5 с</button>
-   <button class="btn ghost mini" id="setA">A</button>
-   <button class="btn ghost mini" id="setB">B</button>
-   <button class="btn ghost mini" id="loop">Петля A–B</button>
-   <select id="rate" style="max-width:110px"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select>
-  </div>
-  <div class="status" id="audioStatus">Звук не загружен. Файл с телефона — самый надёжный и лёгкий вариант.</div>
- </section>
-
- <section class="card" id="setupCard">
-  <h2>2 · Тональность (ответ)</h2>
-  <div class="ctl"><label for="lib">Трек из справочника — ключ скрыт от тебя</label><select id="lib"></select></div>
-  <div id="custom" style="display:none">
-   <div class="ctl"><label for="ttl">Название трека</label><input type="text" id="ttl" placeholder="Исполнитель — Название" autocomplete="off"></div>
-   <div class="two">
-    <div class="ctl"><label for="rootSel">Тоника</label><select id="rootSel"></select></div>
-    <div class="ctl"><label for="modeSel">Лад</label><select id="modeSel"><option value="major">Мажор</option><option value="minor">Минор</option></select></div>
-   </div>
-  </div>
-  <div class="row">
-   <button class="btn ghost mini" id="lookup">🔎 Найти тональность</button>
-   <button class="btn ghost mini" id="reshuffle0">↻ Перемешать ноты</button>
-  </div>
-  <div class="status" id="setupStatus"></div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
  </section>
 
  <section class="card">
-  <h2>3 · Найди ступень</h2>
-  <div class="chips" id="degChips"></div>
-  <div class="status" id="status" role="status" aria-live="polite"></div>
-  <div class="grid" id="grid"></div>
+  <h2>Твой ответ</h2>
+  <div class="answers">
+   <button class="ans" id="a0" data-d="0"><span class="rn">I</span><span class="nm">ТОНИКА</span></button>
+   <button class="ans" id="a2" data-d="2"><span class="rn">III</span><span class="nm">МЕДИАНТА</span></button>
+   <button class="ans" id="a4" data-d="4"><span class="rn">V</span><span class="nm">ДОМИНАНТА</span></button>
+  </div>
+ </section>
+
+ <section class="card">
+  <h2>Настройка</h2>
+  <div class="seg" id="segMode"><button data-m="major">Мажор</button><button data-m="minor">Минор</button><button data-m="random">Случайный</button></div>
+  <div class="ctl"><div class="ctl-top"><label for="key">Тональность</label></div><select id="key"></select></div>
+  <div class="ctl">
+   <div class="ctl-top"><label for="bpm">Темп гаммы</label><span class="val" id="vBpm">90 BPM</span></div>
+   <input type="range" id="bpm" min="50" max="150" step="2" value="90">
+   <div class="presets"><button data-b="66">медленно</button><button data-b="90">средне</button><button data-b="120">быстро</button></div>
+  </div>
+  <div class="tgl"><span>Подписывать ноты сразу<small>иначе названия откроются только после ответа</small></span><button class="sw" id="swNames" role="switch" aria-label="Подписывать ноты сразу"></button></div>
  </section>
 
  <section class="card res" id="res">
@@ -148,162 +152,286 @@ audio{width:100%;margin-top:10px;border-radius:12px}
  </section>
 
  <section class="card hint">
-  <b>Почему не выходит взять звук прямо с Radio Hustle:</b> их плеер отдаёт аудио только своей странице, чужой сайт его не получит. Поэтому звук подкладываешь ты — файлом или прямой ссылкой на mp3.<br><br>
-  <b>Осторожно с dance-версиями:</b> треки с пометкой <i>pitch down / PD</i> транспонированы, справочная тональность оригинала для них не совпадёт. Для таких используй «Свой трек» и вводи ключ, найденный на слух.<br><br>
-  <b>Нагрузка:</b> играет нативный плеер (аппаратное декодирование), страница статичная, без canvas и покадровых циклов. Подзвучка нот — короткий синтез, её можно выключить сверху.
+  <b>Схема:</b> звучит гамма вверх до верхней тоники и обратно вниз — это даёт уху опору. Потом отдельно звучит одна нота: I, III или V. Определи её на слух. Ошибся — жми «Попробовать это же ещё раз»: тональность и нота останутся теми же, можно переслушать гамму и сравнить.<br><br>
+  <b>Нагрузка:</b> без canvas и покадровых циклов, звук событийный, интерфейс статичный.
  </section>
 </main>
 
 <div class="dock" id="dock"><div class="dock-in">
- <div class="ds" id="ds">Шаг 1 · загрузи трек</div>
+ <div class="ds" id="ds">Нажми «Проиграть гамму»</div>
  <div class="da single" id="da">
-  <button class="btn ghost" id="sec" style="display:none">↻ Перемешать</button>
-  <button class="btn primary" id="pri">Скрыть ответ и начать</button>
+  <button class="btn ghost" id="sec" style="display:none">↻ Гамма</button>
+  <button class="btn primary" id="pri">▶ Проиграть гамму</button>
  </div>
 </div></div>
 
 <script>
 (()=>{'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const rand=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
 const NN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const RU=['до','до♯','ре','ре♯','ми','фа','фа♯','соль','соль♯','ля','ля♯','си'];
-const DEG=[{r:'I',n:'Тоника'},{r:'II',n:'Супертоника'},{r:'III',n:'Медианта'},{r:'IV',n:'Субдоминанта'},{r:'V',n:'Доминанта'},{r:'VI',n:'Субмедианта'},{r:'VII',n:'VII ступень'}];
+const pcOf=m=>((m%12)+12)%12;
+const mname=m=>NN[pcOf(m)]+(Math.floor(m/12)-1);
+const mlabel=m=>mname(m)+' ('+RU[pcOf(m)]+')';
+const mfreq=m=>440*Math.pow(2,(m-69)/12);
 const STEPS={major:[0,2,4,5,7,9,11],minor:[0,2,3,5,7,8,10]};
 const MODE_RU={major:'мажор',minor:'минор'},MODE_SH={major:'dur',minor:'moll'};
-/* Ключи проверены по открытым справочникам (Tunebat / Hooktheory / GetSongKey) */
-const LIB=[
- {id:'trace',t:'CHVRCHES — Leave a Trace',root:9,mode:'major'},
- {id:'shape',t:'Ed Sheeran — Shape of You',root:1,mode:'minor'},
- {id:'attention',t:'Charlie Puth — Attention',root:3,mode:'minor'},
- {id:'animals',t:'Maroon 5 — Animals',root:4,mode:'minor'}
-];
-const DEF={target:0,muted:false,src:'file',lib:'trace'};
-let st={...DEF};try{Object.assign(st,JSON.parse(localStorage.getItem('stupeni.tracks')||'{}'));}catch(e){}
-const save=()=>{try{localStorage.setItem('stupeni.tracks',JSON.stringify(st));}catch(e){}};
-const S={phase:'setup',root:9,mode:'major',title:'',order:[],sel:null,a:null,b:null,loop:false,objUrl:null,loaded:false};
+const ROMAN=['I','II','III','IV','V','VI','VII'];
+const TARGETS=[0,2,4];
+const DEG_NAME={0:'Тоника',2:'Медианта',4:'Доминанта'};
 
-/* лёгкий референс-тон */
-let ctx=null,master=null,live=new Set();
-function ac(){if(st.muted)return null;if(ctx){if(ctx.state==='suspended')ctx.resume();return ctx;}
+const DEF={mode:'major',key:'random',bpm:90,names:false,muted:false};
+let settings={...DEF};
+try{Object.assign(settings,JSON.parse(localStorage.getItem('stupeni.gamma')||'{}'));}catch(e){}
+settings.bpm=clamp(Math.round(settings.bpm||90),50,150);
+if(!STEPS[settings.mode]&&settings.mode!=='random')settings.mode='major';
+const save=()=>{try{localStorage.setItem('stupeni.gamma',JSON.stringify(settings));}catch(e){}};
+
+/* ---------- тёплый синтезаторный звук ---------- */
+let audio=null,master=null,bus=null,noiseBuf=null,live=new Set();
+function makeIR(sec,decay){
+ const len=Math.floor(audio.sampleRate*sec),b=audio.createBuffer(2,len,audio.sampleRate);
+ for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
+ return b;
+}
+function ensureAudio(){
+ if(settings.muted)return null;
+ if(audio){if(audio.state==='suspended')audio.resume();return audio;}
  const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
- ctx=new C();master=ctx.createGain();master.gain.value=.6;master.connect(ctx.destination);return ctx;}
-function tone(pc){const c=ac();if(!c)return;const f=440*Math.pow(2,((60+pc)-69)/12),t=c.currentTime;
- const g=c.createGain(),lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=Math.min(6000,f*5);lp.connect(g);g.connect(master);
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.02);g.gain.setValueAtTime(.25,t+.65);g.gain.exponentialRampToValueAtTime(.0001,t+1.05);
- [[1,1,'triangle'],[2,.22,'sine']].forEach(([r,a,ty])=>{const o=c.createOscillator();o.type=ty;o.frequency.value=f*r;const og=c.createGain();og.gain.value=a;o.connect(og);og.connect(lp);o.start(t);o.stop(t+1.1);live.add(o);o.onended=()=>live.delete(o);});}
-function killTones(){live.forEach(o=>{try{o.stop()}catch(e){}});live.clear();}
-document.addEventListener('pointerdown',()=>{if(!st.muted)ac();},{once:true,capture:true});
-
-const player=$('#player');
-const answerPc=()=>(S.root+STEPS[S.mode][st.target])%12;
-function shuffleOrder(){const a=[...Array(12).keys()];for(let i=11;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
- const ans=answerPc();if(a[0]===ans){const k=1+Math.floor(Math.random()*11);[a[0],a[k]]=[a[k],a[0]];}S.order=a;}
-
-function setSource(kind){st.src=kind;save();
- $$('#segSrc button').forEach(b=>b.classList.toggle('on',b.dataset.src===kind));
- $('#paneFile').style.display=kind==='file'?'':'none';
- $('#paneUrl').style.display=kind==='url'?'':'none';}
-function markLoaded(name){S.loaded=true;$('#audioStatus').innerHTML='<span class="good">✓ Загружено:</span> '+name;}
-$('#file').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
- if(S.objUrl)URL.revokeObjectURL(S.objUrl);S.objUrl=URL.createObjectURL(f);player.src=S.objUrl;markLoaded(f.name);
- if(!$('#ttl').value)$('#ttl').value=f.name.replace(/\.[^.]+$/,'');render();});
-$('#loadUrl').addEventListener('click',()=>{const u=$('#url').value.trim();if(!u)return;
- player.src=u;player.load();$('#audioStatus').textContent='Пробую загрузить ссылку…';});
-player.addEventListener('loadedmetadata',()=>{if(!S.loaded)markLoaded('поток по ссылке');render();});
-player.addEventListener('error',()=>{S.loaded=false;$('#audioStatus').innerHTML='<span class="bad">✗ Ссылка не играет.</span> Нужен прямой адрес аудиофайла (mp3/m4a) без защиты. Надёжнее — файл с телефона.';render();});
-$('#back5').addEventListener('click',()=>{player.currentTime=Math.max(0,player.currentTime-5);});
-$('#fwd5').addEventListener('click',()=>{player.currentTime=Math.min(player.duration||0,player.currentTime+5);});
-$('#setA').addEventListener('click',()=>{S.a=player.currentTime;render();});
-$('#setB').addEventListener('click',()=>{S.b=player.currentTime;render();});
-$('#loop').addEventListener('click',()=>{S.loop=!S.loop;render();});
-$('#rate').addEventListener('change',e=>{player.playbackRate=+e.target.value;});
-player.addEventListener('timeupdate',()=>{if(S.loop&&S.a!==null&&S.b!==null&&S.b>S.a&&player.currentTime>=S.b)player.currentTime=S.a;});
-
-function buildStatic(){
- $('#degChips').innerHTML=DEG.map((d,i)=>'<button class="chip" data-d="'+i+'">'+d.r+' · '+d.n+'</button>').join('');
- $('#rootSel').innerHTML=NN.map((n,i)=>'<option value="'+i+'">'+n+' ('+RU[i]+')</option>').join('');
- $('#lib').innerHTML=LIB.map(t=>'<option value="'+t.id+'">'+t.t+'</option>').join('')+'<option value="custom">🎧 Свой трек (введу ключ сам)</option>';
+ audio=new C();
+ master=audio.createGain();master.gain.value=.8;
+ const comp=audio.createDynamicsCompressor();
+ comp.threshold.value=-16;comp.knee.value=18;comp.ratio.value=4;comp.attack.value=.004;comp.release.value=.24;
+ master.connect(comp);comp.connect(audio.destination);
+ bus=audio.createGain();bus.connect(master);
+ const conv=audio.createConvolver();conv.buffer=makeIR(1.25,2.8);
+ const wet=audio.createGain();wet.gain.value=.24;
+ bus.connect(conv);conv.connect(wet);wet.connect(master);
+ const nb=audio.createBuffer(1,Math.floor(audio.sampleRate*.05),audio.sampleRate),nd=nb.getChannelData(0);
+ for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,2);
+ noiseBuf=nb;
+ return audio;
 }
-function readAnswer(){
- const v=$('#lib').value;
- if(v==='custom'){S.root=+$('#rootSel').value;S.mode=$('#modeSel').value;S.title=$('#ttl').value.trim()||'Свой трек';}
- else{const t=LIB.find(x=>x.id===v)||LIB[0];S.root=t.root;S.mode=t.mode;S.title=t.t;}
+function playTone(midi,t,gate){
+ if(!audio||settings.muted)return;
+ const f=mfreq(midi),tail=clamp(gate*1.1,.2,1);
+ const g=audio.createGain(),lp=audio.createBiquadFilter();
+ lp.type='lowpass';lp.frequency.value=Math.min(8500,f*6);lp.Q.value=.5;
+ lp.connect(g);g.connect(bus);
+ const peak=.22;
+ g.gain.setValueAtTime(0,t);
+ g.gain.linearRampToValueAtTime(peak,t+.008);
+ g.gain.exponentialRampToValueAtTime(Math.max(.001,peak*.35),t+Math.min(.12,gate*.5));
+ g.gain.exponentialRampToValueAtTime(.0001,t+gate+tail);
+ [[1,1,'triangle'],[2,.32,'sine'],[3,.13,'sine']].forEach(([r,a,ty])=>{
+  const o=audio.createOscillator();o.type=ty;o.frequency.value=f*r;o.detune.value=Math.random()*6-3;
+  const og=audio.createGain();og.gain.value=a;o.connect(og);og.connect(lp);
+  o.start(t);o.stop(t+gate+tail+.05);live.add(o);o.onended=()=>live.delete(o);
+ });
+ if(noiseBuf){
+  const ns=audio.createBufferSource();ns.buffer=noiseBuf;
+  const nf=audio.createBiquadFilter();nf.type='bandpass';nf.frequency.value=Math.min(7000,f*3);nf.Q.value=1.1;
+  const ng=audio.createGain();ng.gain.setValueAtTime(.05,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.045);
+  ns.connect(nf);nf.connect(ng);ng.connect(bus);
+  ns.start(t);ns.stop(t+.06);live.add(ns);ns.onended=()=>live.delete(ns);
+ }
 }
-function start(){
- if(!S.loaded){$('#setupStatus').innerHTML='<span class="warn">Сначала загрузи звук</span> — файл с телефона или прямую ссылку.';return;}
- readAnswer();S.sel=null;S.phase='answer';shuffleOrder();render();
-}
-function confirmChoice(){
- if(S.phase!=='answer'||S.sel===null)return;
- S.phase='result';render();
-}
-function again(){S.phase='answer';S.sel=null;shuffleOrder();render();}
-function primary(){if(S.phase==='setup')start();else if(S.phase==='answer')confirmChoice();else again();}
+document.addEventListener('pointerdown',()=>{if(!settings.muted)ensureAudio();},{once:true,capture:true});
 
-function renderGrid(){
- const g=$('#grid'),ans=answerPc();
- g.innerHTML=S.order.map((pc,i)=>{
-  let c='nb';
-  if(S.phase==='answer'&&S.sel===pc)c+=' sel';
-  if(S.phase==='result'){if(pc===S.sel)c+=(pc===ans?' hit':' miss');else if(pc===ans)c+=' answer';}
-  const dis=S.phase==='setup';
-  return '<button class="'+c+'" data-pc="'+pc+'" '+(dis?'disabled':'')+'><span class="pos">'+(i+1)+'</span><span class="nm">'+NN[pc]+'</span><span class="ru">'+RU[pc]+'</span></button>';
+/* ---------- состояние ---------- */
+const G={root:60,mode:'major',scale:[],deg:0,target:60,phase:'idle',chosen:null,ok:null,activeCell:-1,mysteryPlay:false};
+let token=0,timers=[],gapTimer=null;
+function later(fn,ms){clearTimeout(gapTimer);gapTimer=setTimeout(fn,ms);}
+function stopPlayback(){
+ token++;timers.forEach(clearTimeout);timers=[];clearTimeout(gapTimer);
+ live.forEach(o=>{try{o.stop()}catch(e){}});live.clear();
+ G.activeCell=-1;G.mysteryPlay=false;
+}
+function schedule(items,done){
+ stopPlayback();
+ const tk=token,beat=60/settings.bpm,ctx=ensureAudio();
+ const use=!!ctx&&!settings.muted,t0=use?ctx.currentTime+.08:0;
+ let acc=0;
+ items.forEach(it=>{
+  const st=t0+acc*beat,gate=Math.max(.16,Math.min(it.beats*beat*.9,it.beats>1?1.3:.7));
+  if(use)playTone(it.midi,st,gate);
+  const on=use?(st-ctx.currentTime)*1000:acc*beat*1000;
+  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=it.cell;G.mysteryPlay=it.cell===-1;renderStage();},Math.max(0,on)));
+  timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();},Math.max(0,on+gate*1000)));
+  acc+=it.beats;
+ });
+ const end=(use?(t0+acc*beat-ctx.currentTime):acc*beat)*1000+220;
+ timers.push(setTimeout(()=>{if(tk!==token)return;G.activeCell=-1;G.mysteryPlay=false;renderStage();if(done)done();},Math.max(0,end)));
+}
+const SCALE_PATH=[0,1,2,3,4,5,6,7,6,5,4,3,2,1,0];
+function playScale(done){schedule(SCALE_PATH.map(c=>({midi:G.scale[c],cell:c,beats:1})),done);}
+function playTarget(done){schedule([{midi:G.target,cell:-1,beats:2}],done);}
+
+function rootFromPc(pc){let r=60+pc;if(r>66)r-=12;return r;}
+function newRound(){
+ stopPlayback();
+ const pc=settings.key==='random'?rand(0,11):+settings.key;
+ G.root=rootFromPc(pc);
+ G.mode=settings.mode==='random'?pick(['major','minor']):settings.mode;
+ const st=STEPS[G.mode];
+ G.scale=[0,1,2,3,4,5,6].map(d=>G.root+st[d]).concat([G.root+12]);
+ G.deg=pick(TARGETS);
+ G.target=G.root+st[G.deg];
+ G.phase='idle';G.chosen=null;G.ok=null;
+ renderAll();
+}
+function runTask(){
+ G.chosen=null;G.ok=null;G.phase='playing';renderAll();
+ playScale(()=>{later(()=>{playTarget(()=>{G.phase='question';renderAll();});},420);});
+}
+function answer(d){
+ if(G.phase!=='question')return;
+ G.chosen=d;G.ok=(d===G.deg);G.phase='result';renderAll();
+}
+function retrySame(){G.chosen=null;G.ok=null;runTask();}
+function nextTask(){newRound();runTask();}
+function replayScale(){
+ if(G.phase==='idle')return;
+ const back=G.phase==='result'?'result':'question';
+ G.phase='playing';renderAll();
+ playScale(()=>{G.phase=back;renderAll();});
+}
+function replayTarget(){
+ if(G.phase==='idle')return;
+ const back=G.phase==='result'?'result':'question';
+ G.phase='playing';renderAll();
+ playTarget(()=>{G.phase=back;renderAll();});
+}
+function primary(){
+ const P=G.phase;
+ if(P==='idle')runTask();
+ else if(P==='playing'){stopPlayback();G.phase=G.chosen===null?'question':'result';if(G.scale.length&&!G.startedOnce)G.phase='question';renderAll();}
+ else if(P==='question')replayTarget();
+ else if(P==='result'){G.ok?nextTask():retrySame();}
+}
+
+/* ---------- рендер ---------- */
+function keyLabel(){return mname(G.root)+'-'+MODE_SH[G.mode]+' ('+RU[pcOf(G.root)]+' '+MODE_RU[G.mode]+')';}
+function revealed(){return settings.names||G.phase==='result';}
+function renderStage(){
+ const strip=$('#strip');
+ strip.innerHTML=G.scale.map((m,i)=>{
+  let c='cell';
+  if(G.activeCell===i)c+=' on';
+  if(G.phase==='result'&&i===G.deg)c+=' tgt';
+  const nm=revealed()?mname(m):'•••';
+  const ru=revealed()?RU[pcOf(m)]:'';
+  return '<div class="'+c+'"><span class="rn">'+(i===7?'I':ROMAN[i])+'</span><span class="nn">'+nm+(ru?'<br>'+ru:'')+'</span></div>';
+ }).join('');
+ const mys=$('#mystery');
+ mys.classList.toggle('play',G.mysteryPlay);
+ if(G.phase==='result'){
+  $('#mBig').textContent=ROMAN[G.deg];
+  $('#mTxt').innerHTML='Загаданная нота: <b>'+mlabel(G.target)+'</b> — это <b>'+ROMAN[G.deg]+' ступень ('+DEG_NAME[G.deg]+')</b>.';
+ }else if(G.phase==='idle'){
+  $('#mBig').textContent='?';
+  $('#mTxt').innerHTML='Здесь прозвучит загаданная нота. Это будет <b>I</b>, <b>III</b> или <b>V</b> ступень.';
+ }else{
+  $('#mBig').textContent=G.mysteryPlay?'♪':'?';
+  $('#mTxt').innerHTML=G.mysteryPlay?'Слушай загаданную ноту…':'Нота прозвучала. Переслушай её кнопкой внизу или сравни с гаммой.';
+ }
+}
+function renderAnswers(){
+ [0,2,4].forEach(d=>{
+  const b=$('#a'+d);
+  b.disabled=G.phase!=='question';
+  b.classList.remove('hit','miss');
+  if(G.phase==='result'){
+   if(d===G.deg)b.classList.add('hit');
+   else if(d===G.chosen)b.classList.add('miss');
+  }
+ });
+}
+function renderStatus(){
+ const P=G.phase;
+ if(P==='idle')$('#status').innerHTML='Нажми <b>«Проиграть гамму»</b>: сначала гамма вверх и вниз, потом одна нота.';
+ else if(P==='playing')$('#status').innerHTML='Слушай… '+($('#mystery').classList.contains('play')?'загаданная нота.':'гамма вверх и обратно вниз.');
+ else if(P==='question')$('#status').innerHTML='Какая это ступень? Нажми <b>I</b>, <b>III</b> или <b>V</b>. Можно переслушать гамму и ноту.';
+ else{
+  const note='<span class="dim">'+mlabel(G.target)+'</span>';
+  $('#status').innerHTML=G.ok
+   ?'<span class="good">✓ Верно!</span> Это <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note
+   :'<span class="bad">✗ Неправильно.</span> Ты выбрал '+ROMAN[G.chosen]+', а это была <b>'+ROMAN[G.deg]+' ('+DEG_NAME[G.deg]+')</b> · '+note+'. Жми «Попробовать это же ещё раз».';
+ }
+}
+function renderResult(){
+ const show=G.phase==='result';
+ $('#res').classList.toggle('show',show);
+ if(!show)return;
+ $('#keyline').textContent='Тональность: '+keyLabel()+' · тоника '+mlabel(G.root);
+ $('#verdict').innerHTML='Загаданная нота <b>'+mlabel(G.target)+'</b> — ступень <b>'+ROMAN[G.deg]+'</b>. Сравни её с тоникой и остальными опорными звуками:';
+ $('#legend').innerHTML=TARGETS.map(d=>{
+  const m=G.root+STEPS[G.mode][d];
+  return '<div class="li'+(d===G.deg?' t':'')+'"><b>'+ROMAN[d]+'</b>'+mlabel(m)+'<br><span style="color:var(--dim)">'+DEG_NAME[d]+'</span></div>';
  }).join('');
 }
-function render(){
- $$('#degChips .chip').forEach(b=>b.classList.toggle('on',+b.dataset.d===st.target));
- $('#lib').value=st.lib;$('#custom').style.display=st.lib==='custom'?'':'none';
- $('#loop').classList.toggle('on',S.loop);
- $('#loop').textContent=S.loop?'Петля ✓':'Петля A–B';
- $('#setA').textContent=S.a===null?'A':'A '+S.a.toFixed(1);
- $('#setB').textContent=S.b===null?'B':'B '+S.b.toFixed(1);
- $('#snd').classList.toggle('off',st.muted);
- $('#snd').innerHTML=st.muted?'🔇 <span>Тихо</span>':'🔊 <span>Подзвучка</span>';
- const keyTxt=NN[S.root]+'-'+MODE_SH[S.mode]+' ('+RU[S.root]+' '+MODE_RU[S.mode]+')';
- $('#setupCard').style.display=S.phase==='setup'?'':'none';
- if(S.phase==='setup'){
-  $('#setupStatus').innerHTML=st.lib==='custom'
-   ?'Режим самопроверки: ключ вводишь ты, приложение скроет его до подтверждения.'
-   :'Ключ этого трека зашит и <b>скрыт</b> — ты его не увидишь до подтверждения. Осталось подложить сам звук.';
- }
- const d=DEG[st.target];
- if(S.phase==='setup')$('#status').innerHTML='Задание: найти <b>'+d.r+' · '+d.n+'</b>. Ноты будут перемешаны, тоника не окажется первой.';
- else if(S.phase==='answer')$('#status').innerHTML=S.sel===null
-  ?'Слушай трек и нажимай ноты — каждая подсветится и прозвучит. Ищем <b>'+d.r+' · '+d.n+'</b>.'
-  :'Выбрано <b>'+NN[S.sel]+' ('+RU[S.sel]+')</b>. Можно перебрать другие или подтвердить.';
- else{const ok=S.sel===answerPc();
-  $('#status').innerHTML=ok?'<span class="good">✓ Верно.</span> '+NN[S.sel]+' — это '+d.r+' ('+d.n+').':'<span class="bad">✗ Мимо.</span> Ты выбрал '+NN[S.sel]+', а '+d.r+' — это '+NN[answerPc()]+' ('+RU[answerPc()]+').';}
- $('#res').classList.toggle('show',S.phase==='result');
- if(S.phase==='result'){
-  $('#keyline').textContent=S.title+' · '+keyTxt;
-  $('#verdict').innerHTML='Тоника: <b>'+NN[S.root]+' ('+RU[S.root]+')</b>. Ступень '+d.r+' = <b>'+NN[answerPc()]+' ('+RU[answerPc()]+')</b>.';
-  $('#legend').innerHTML=DEG.map((x,i)=>{const pc=(S.root+STEPS[S.mode][i])%12;return '<div class="li'+(i===st.target?' t':'')+'"><b>'+x.r+'</b> · '+NN[pc]+' ('+RU[pc]+')<br><span style="color:var(--dim)">'+x.n+'</span></div>';}).join('');
- }
- const pri=$('#pri'),sec=$('#sec'),da=$('#da');
- sec.style.display=S.phase==='setup'?'none':'';
- da.classList.toggle('single',S.phase==='setup');
- pri.textContent=S.phase==='setup'?'Скрыть ответ и начать':S.phase==='answer'?'Подтвердить выбор':'Ещё раз · перемешать';
- pri.disabled=S.phase==='answer'&&S.sel===null;
- $('#ds').innerHTML=S.phase==='setup'?'Шаг 1 · загрузи трек':S.phase==='answer'?(S.sel===null?'Шаг 2 · выбери одну ноту':'Выбрано: '+NN[S.sel]+' ('+RU[S.sel]+')'):'Шаг 3 · разбор';
- renderGrid();
- document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px');
+function renderDock(){
+ const P=G.phase,pri=$('#pri'),sec=$('#sec'),da=$('#da');
+ sec.style.display=(P==='question'||P==='result')?'':'none';
+ da.classList.toggle('single',sec.style.display==='none');
+ if(P==='idle'){pri.textContent='▶ Проиграть гамму';}
+ else if(P==='playing'){pri.textContent='⏹ Стоп';}
+ else if(P==='question'){pri.textContent='▶ Загаданная нота';sec.textContent='↻ Гамма';}
+ else{pri.textContent=G.ok?'Следующее задание →':'↻ Попробовать это же ещё раз';sec.textContent=G.ok?'↻ Это же':'Следующее →';}
+ $('#ds').innerHTML=P==='idle'?'Шаг 1 · гамма':P==='playing'?'Играет…':P==='question'?'Шаг 2 · выбери ступень':(G.ok?'Верно ✓':'Ошибка — разбери и повтори');
 }
+function renderSettings(){
+ $$('#segMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===settings.mode));
+ $('#key').value=settings.key;
+ $('#bpm').value=settings.bpm;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;
+ $('#cMode').textContent=settings.mode==='random'?'лад: случайный':MODE_RU[settings.mode];
+ $('#swNames').classList.toggle('on',settings.names);
+ $('#swNames').setAttribute('aria-checked',String(settings.names));
+ $('#snd').classList.toggle('off',settings.muted);
+ $('#snd').innerHTML=settings.muted?'🔇 <span>Тихо</span>':'🔊 <span>Звук</span>';
+ $('#sub').textContent=revealed()?keyLabel():'тональность скрыта до ответа';
+ $('#ttl').textContent=G.phase==='idle'?'Гамма и загаданная нота':'Задание: I, III или V';
+}
+function renderAll(){renderSettings();renderStage();renderAnswers();renderStatus();renderResult();renderDock();
+ document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px');}
 
+/* ---------- события ---------- */
 $('#pri').addEventListener('click',primary);
-$('#sec').addEventListener('click',()=>{S.sel=null;shuffleOrder();render();});
-$('#reshuffle0').addEventListener('click',()=>{readAnswer();shuffleOrder();render();});
-$('#degChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;st.target=+b.dataset.d;save();if(S.phase!=='setup'){S.sel=null;shuffleOrder();}render();});
-$('#grid').addEventListener('click',e=>{const b=e.target.closest('.nb');if(!b||S.phase==='setup')return;const pc=+b.dataset.pc;tone(pc);if(S.phase==='answer'){S.sel=pc;render();}});
-$('#lib').addEventListener('change',e=>{st.lib=e.target.value;save();S.phase='setup';S.sel=null;readAnswer();shuffleOrder();render();});
-$('#rootSel').addEventListener('change',()=>{readAnswer();shuffleOrder();render();});
-$('#modeSel').addEventListener('change',()=>{readAnswer();shuffleOrder();render();});
-$('#ttl').addEventListener('input',()=>{readAnswer();render();});
-$('#lookup').addEventListener('click',()=>{const q=($('#ttl').value.trim()||S.title||'')+' key tunebat';window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener');});
-$$('#segSrc button').forEach(b=>b.addEventListener('click',()=>setSource(b.dataset.src)));
-$('#snd').addEventListener('click',()=>{st.muted=!st.muted;save();if(st.muted){killTones();if(master)master.gain.value=0;}else{ac();if(master)master.gain.value=.6;}render();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)killTones();});
+$('#sec').addEventListener('click',()=>{
+ if(G.phase==='question')replayScale();
+ else if(G.phase==='result'){G.ok?retrySame():nextTask();}
+});
+$$('.ans').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.d)));
+$$('#segMode button').forEach(b=>b.addEventListener('click',()=>{settings.mode=b.dataset.m;save();newRound();}));
+$('#key').addEventListener('change',e=>{settings.key=e.target.value;save();newRound();});
+$('#bpm').addEventListener('input',e=>{settings.bpm=+e.target.value;$('#vBpm').textContent=settings.bpm+' BPM';$('#cBpm').textContent='♩ = '+settings.bpm;save();});
+$$('.presets button').forEach(b=>b.addEventListener('click',()=>{settings.bpm=+b.dataset.b;save();renderSettings();}));
+$('#swNames').addEventListener('click',()=>{settings.names=!settings.names;save();renderAll();});
+$('#snd').addEventListener('click',()=>{
+ settings.muted=!settings.muted;save();
+ if(settings.muted){stopPlayback();if(master)master.gain.value=0;}
+ else{ensureAudio();if(master)master.gain.value=.8;}
+ renderSettings();
+});
+document.addEventListener('keydown',e=>{
+ const t=(document.activeElement&&document.activeElement.tagName)||'';
+ if(['INPUT','SELECT','TEXTAREA'].includes(t))return;
+ if(e.code==='Digit1'){e.preventDefault();answer(0);}
+ else if(e.code==='Digit2'){e.preventDefault();answer(2);}
+ else if(e.code==='Digit3'){e.preventDefault();answer(4);}
+ else if(e.code==='Space'||e.code==='Enter'){e.preventDefault();primary();}
+ else if(e.code==='KeyG'){e.preventDefault();replayScale();}
+ else if(e.code==='KeyN'){e.preventDefault();replayTarget();}
+ else if(e.code==='Escape'){stopPlayback();renderAll();}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.phase==='playing'){stopPlayback();G.phase='question';renderAll();}});
 
-buildStatic();setSource(st.src);readAnswer();shuffleOrder();render();
+/* ---------- старт ---------- */
+$('#key').innerHTML='<option value="random">🎲 Случайная тональность</option>'+NN.map((n,i)=>'<option value="'+i+'">'+n+' ('+RU[i]+')</option>').join('');
+newRound();
 if('ResizeObserver'in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--dock-h',$('#dock').offsetHeight+'px')).observe($('#dock'));
 })();
 </script>
